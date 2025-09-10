@@ -12,6 +12,7 @@ class Publicaciones {
             string Titulo;
             int Anio;
             int Id;
+            int Tipo; //Tesis=0  Libros=1    Revistas=2
     public:
             //Publicaciones():Titulo(""),Anio(0),Id(0){};
             //constructor
@@ -23,6 +24,9 @@ class Publicaciones {
     static void total_publicaciones() {
           cout<<"El total de Publicaciones es"<<Total_Publicaciones<<endl;
     };
+    bool operator==(const Publicaciones *otro) const {
+        return this->Id == otro->Id;
+    }
 };
 //clases libos, revistas y tesis heredan publicaciones
 class Libro : public Publicaciones {
@@ -38,6 +42,7 @@ class Libro : public Publicaciones {
         //constructor
         Libro(string tit, int ani, int id, string edi, string gen, string nom, string ape, int sto, int depo): Publicaciones(tit, ani,id), Editorial(edi), Genero(gen), AutorNom(nom),AutorApe(ape), strock(sto), disposito(depo) {
             Total_Publicaciones++;
+            Tipo = 1;
         };
         //destructor
         ~Libro() {
@@ -47,6 +52,7 @@ class Libro : public Publicaciones {
         void mostrar() override {
             cout<<"Libro: "<<Titulo<<endl;
         };
+
 };
 class Revista : public Publicaciones {
     //datos de los revistas
@@ -61,6 +67,7 @@ public:
     //constructor
     Revista(string tit, int ani, int id, string edi, string gen, int num, int mes, int sto, int depo): Publicaciones(tit, ani,id), Editorial(edi), Genero(gen), Numero(num),Mes_Publicado(mes), strock(sto),disposito(depo) {
         Total_Publicaciones++;
+        Tipo = 2;
     };
     //destructor
     ~Revista() {
@@ -85,6 +92,7 @@ public:
     //constructor
     Tesis(string tit, int ani, int id, string tem, string uni, string carre, string nom, string ape, int tot, int depo):Publicaciones(tit,ani,id),Tema(tem),Universidad(uni),Carrera(carre),AutorNom(nom),AutorApe(ape),strock(tot),disposito(depo){
         Total_Publicaciones++;
+        Tipo = 0;
     };
     //destructor
     ~Tesis() {
@@ -98,11 +106,26 @@ public:
 //--------------------------------------------------------
 
 //inventario un vector
+class Inventaria {
+    private:
+        vector<Publicaciones>* biblioteca;
+    public:
+        Inventaria(vector<Publicaciones>* biblio) : biblioteca(biblioteca) {};
+        void Nueva_Publi(Publicaciones* nueva) {
+            biblioteca->push_back(*nueva);
+        }
+        void Eliminar_Publi(Publicaciones* chau) {
+            int i=0;
+
+        }
+};
+
+
 
 //iniciar contador de publicaciones
 int Publicaciones::Total_Publicaciones = 0;
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
+
 int main() {
     // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
     // <b>lang</b> variable name to see how CLion can help you rename it.
