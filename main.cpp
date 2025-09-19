@@ -27,6 +27,7 @@ class Publicaciones {
     bool operator==(const Publicaciones *otro) const {
         return this->Id == otro->Id;
     }
+
 };
 //clases libos, revistas y tesis heredan publicaciones
 class Libro : public Publicaciones {
@@ -109,14 +110,15 @@ public:
 class Inventaria {
     private:
         vector<Publicaciones>* biblioteca;
+        vector<Publicaciones>::iterator ite_biblio;
     public:
         Inventaria(vector<Publicaciones>* biblio) : biblioteca(biblioteca) {};
         void Nueva_Publi(Publicaciones* nueva) {
             biblioteca->push_back(*nueva);
         }
         void Eliminar_Publi(Publicaciones* chau) {
-            int i=0;
-
+            ite_biblio=find(biblioteca->begin(),biblioteca->end(),chau);
+            biblioteca->erase(ite_biblio);
         }
 };
 
