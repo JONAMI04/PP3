@@ -283,6 +283,9 @@ public:
 
 // Inicializar miembros static
 int Publicaciones::Total_Publicaciones = 0;
+static void mostrarPublicaciones() {
+    Publicaciones::total_publicaciones();
+}
 DatabaseManager Publicaciones::db;
 
 // Clase Libro
@@ -1001,6 +1004,8 @@ int main() {
 
     SistemaBiblioteca sistema;
     sistema.mostrarMenuPrincipal();
+
+    mostrarPublicaciones();
 
     return 0;
 }
