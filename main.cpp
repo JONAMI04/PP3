@@ -233,7 +233,7 @@ public:
     }
 
     static void cargarDatosDesdeCSV() {
-        cout << "Función para cargar datos desde CSV (a implementar)" << endl;
+        cout << "Funcion para cargar datos desde CSV (a implementar)" << endl;
     }
 };
 
@@ -272,11 +272,12 @@ public:
 
     bool guardarEnDB() override {
         return db.insertarLibro(Id, Titulo, to_string(Anio), Editorial,
-                               AutorNom, AutorApe, Genero, stock, disponibles);
+                               AutorNom, AutorApe, Genero,
+                               stock, disponibles);
     }
 };
 
-// Clase Revista adaptada a tu estructura
+// Clase Revista
 class Revista : public Publicaciones {
 private:
     string Editorial;
@@ -308,11 +309,12 @@ public:
 
     bool guardarEnDB() override {
         return db.insertarRevista(Id, Titulo, to_string(Anio), Mes,
-                                Numero, Editorial, Genero, stock, disponibles);
+                                Numero, Editorial, Genero, stock,
+                                disponibles);
     }
 };
 
-// Clase Tesis adaptada a tu estructura
+// Clase Tesis
 class Tesis : public Publicaciones {
 private:
     string Universidad;
@@ -343,11 +345,12 @@ public:
 
     bool guardarEnDB() override {
         return db.insertarTesis(Id, Titulo, Anio, Universidad,
-                              Carrera, AutorNom, AutorApe, stock, disponibles);
+                              Carrera, AutorNom, AutorApe,
+                              stock, disponibles);
     }
 };
 
-// Sistema de biblioteca mejorado
+// Menus de Biblioteca adaptar
 class SistemaBiblioteca {
 private:
     DatabaseManager db;
@@ -357,14 +360,14 @@ public:
         int opcion;
         do {
             cout << "\n=== SISTEMA DE BIBLIOTECA ===" << endl;
-            cout << "1. Gestión de Libros" << endl;
-            cout << "2. Gestión de Revistas" << endl;
-            cout << "3. Gestión de Tesis" << endl;
-            cout << "4. Gestión de Usuarios" << endl;
+            cout << "1. Gestion de Libros" << endl;
+            cout << "2. Gestion de Revistas" << endl;
+            cout << "3. Gestion de Tesis" << endl;
+            cout << "4. Gestion de Usuarios" << endl;
             cout << "5. Mostrar Todo el Inventario" << endl;
             cout << "6. Cargar Datos de Ejemplo" << endl;
             cout << "7. Salir" << endl;
-            cout << "Seleccione una opción: ";
+            cout << "Seleccione una opcion: ";
             cin >> opcion;
             cin.ignore();
 
@@ -375,8 +378,8 @@ public:
                 case 4: menuUsuarios(); break;
                 case 5: mostrarTodo(); break;
                 case 6: cargarDatosEjemplo(); break;
-                case 7: cout << "¡Hasta luego!" << endl; break;
-                default: cout << "Opción inválida!" << endl;
+                case 7: cout << "Hasta luego" << endl; break;
+                default: cout << "Opcion inválida!" << endl;
             }
         } while (opcion != 7);
     }
@@ -399,7 +402,7 @@ private:
                 case 2: mostrarLibros(); break;
                 case 3: buscarLibro(); break;
                 case 4: break;
-                default: cout << "Opción inválida!" << endl;
+                default: cout << "Opcion inválida!" << endl;
             }
         } while (opcion != 4);
     }
@@ -452,17 +455,17 @@ private:
 
     void menuRevistas() {
         // Similar a menuLibros pero para revistas
-        cout << "Gestión de Revistas (implementación similar a libros)" << endl;
+        cout << "Gestion de Revistas (implementacion similar a libros)" << endl;
     }
 
     void menuTesis() {
         // Similar a menuLibros pero para tesis
-        cout << "Gestión de Tesis (implementación similar a libros)" << endl;
+        cout << "Gestion de Tesis (implementacion similar a libros)" << endl;
     }
 
     void menuUsuarios() {
-        // Gestión de usuarios
-        cout << "Gestión de Usuarios" << endl;
+        // Gestion de usuarios
+        cout << "Gestion de Usuarios" << endl;
     }
 
     void mostrarTodo() {
@@ -493,7 +496,7 @@ private:
         // Aquí podrías cargar datos de tus archivos CSV
         // Por ahora solo un ejemplo
         db.insertarLibro(100, "Ejemplo de Libro", "2024", "Editorial Ejemplo",
-                        "Autor", "Ejemplo", "Ficción", 5, 3);
+                        "Autor", "Ejemplo", "Ficcion", 5, 3);
 
         cout << "Datos de ejemplo cargados." << endl;
     }
