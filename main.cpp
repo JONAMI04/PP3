@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm>
+//#include <algorithm>
 #include "sqlite3.h"
-#include <memory>
+//#include <memory>
 using namespace std;
 
 // Clase para manejar la base de datos
@@ -70,7 +70,7 @@ public:
         return resultados;
     }
 
-    // Crear tablas basadas en tus archivos CSV
+    // Crear tablas
     void crearTablasSiNoExisten() {
         // Tabla de libros
         string sql_libros =
@@ -133,7 +133,7 @@ public:
         cout << "Tablas verificadas/creadas correctamente." << endl;
     }
 
-    // Métodos para insertar datos
+    // Métodos para Insertar Datos
     bool insertarLibro(int id, const string& titulo, const string& anio, const string& editorial,
                       const string& nombre_autor, const string& apellido_autor, const string& genero,
                       int cantidad_total, int cantidad_disponible) {
@@ -187,7 +187,7 @@ public:
         return ejecutarConsulta("SELECT * FROM usuarios;");
     }
 
-    // Método para escapar comillas simples en SQL
+    // Solucion comillas simples en SQL
     string escaparSQL(const string& texto) {
         string resultado = texto;
         size_t pos = 0;
