@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 //#include <algorithm>
+#include <ctime>
+#include <map>
 #include "sqlite3.h"
 //#include <memory>
 using namespace std;
@@ -49,7 +51,7 @@ public:
         return true;
     }
 
-    // Método para ejecutar consultas con retorno de datos
+    // Méto do para Ejecutar Consultas con Retorno de Datos
     vector<vector<string>> ejecutarConsulta(const string& sql) {
         vector<vector<string>> resultados;
         sqlite3_stmt* stmt;
@@ -70,7 +72,7 @@ public:
         return resultados;
     }
 
-    // Crear tablas
+    // Crear Tablas si no Existen
     void crearTablasSiNoExisten() {
         // Tabla de libros
         string sql_libros =
@@ -130,6 +132,20 @@ public:
             ");";
         ejecutarSQL(sql_usuarios);
 
+        // Tabla de préstamos
+        string sql_prestamos =
+            "CREATE TABLE IF NOT EXISTS prestamos ("
+            "ID_Prestamo INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "ID_Usuario INTEGER,"
+            "ID_Publicacion INTEGER,"
+            "Tipo_Publicacion INTEGER," // 0=Tesis, 1=Libro, 2=Revista
+            "Fecha_Prestamo TEXT,"
+            "Fecha_Devolucion TEXT,"
+            "Estado TEXT,"
+            "FOREIGN KEY(ID_Usuario) REFERENCES usuarios(ID_Usuario)"
+            ");";
+        ejecutarSQL(sql_prestamos);
+
         cout << "Tablas verificadas/creadas correctamente." << endl;
     }
 
@@ -170,7 +186,15 @@ public:
         return ejecutarSQL(sql);
     }
 
-    // Métodos para consultar datos
+    bool insertarPrestamo(int id_usuario, int id_publicacion, int tipo_publicacion,
+                         const string& fecha_prestamo, const string& fecha_devolucion, const string& estado) {
+        string sql = "INSERT INTO prestamos (ID_Usuario, ID_Publicacion, Tipo_Publicacion, Fecha_Prestamo, Fecha_Devolucion, Estado) "
+                    "VALUES (" + to_string(id_usuario) + ", " + to_string(id_publicacion) + ", " +
+                    to_string(tipo_publicacion) + ", '" + fecha_prestamo + "', '" + fecha_devolucion + "', '" + estado + "');";
+        return ejecutarSQL(sql);
+    }
+
+    // Métodos para Consultar Datos
     vector<vector<string>> obtenerTodosLosLibros() {
         return ejecutarConsulta("SELECT * FROM libros;");
     }
@@ -187,7 +211,27 @@ public:
         return ejecutarConsulta("SELECT * FROM usuarios;");
     }
 
-    // Solucion comillas simples en SQL
+    vector<vector<string>> obtenerPrestamosUsuario(int id_usuario) {
+        return ejecutarConsulta("SELECT * FROM prestamos WHERE ID_Usuario = " + to_string(id_usuario) + ";");
+    }
+
+    vector<vector<string>> obtenerTodosLosPrestamos() {
+        return ejecutarConsulta("SELECT * FROM prestamos;");
+    }
+
+    bool actualizarDisponibilidad(int tipo, int id, int nueva_cantidad) {
+        string tabla;
+        if (tipo == 0) tabla = "tesis";
+        else if (tipo == 1) tabla = "libros";
+        else if (tipo == 2) tabla = "revista";
+        else return false;
+
+        string sql = "UPDATE " + tabla + " SET Cantidad_Disponible = " + to_string(nueva_cantidad) +
+                    " WHERE ID_" + (tipo == 0 ? "Tesis" : (tipo == 1 ? "Libro" : "Revista")) + " = " + to_string(id) + ";";
+        return ejecutarSQL(sql);
+    }
+
+    // Solucion Comillas Simples en SQL
     string escaparSQL(const string& texto) {
         string resultado = texto;
         size_t pos = 0;
@@ -199,7 +243,7 @@ public:
     }
 };
 
-// Clase publicaciones abstracta
+// Clase Publicaciones abstracta
 class Publicaciones {
 protected:
     static int Total_Publicaciones;
@@ -231,7 +275,7 @@ public:
     static void total_publicaciones() {
         cout << "El total de Publicaciones es: " << Total_Publicaciones << endl;
     }
-
+//Creo Que no Hace Falta
     static void cargarDatosDesdeCSV() {
         cout << "Funcion para cargar datos desde CSV (a implementar)" << endl;
     }
@@ -275,6 +319,10 @@ public:
                                AutorNom, AutorApe, Genero,
                                stock, disponibles);
     }
+
+    int getDisponibles() const { return disponibles; }
+
+    void setDisponibles(int disp) { disponibles = disp; }
 };
 
 // Clase Revista
@@ -312,6 +360,10 @@ public:
                                 Numero, Editorial, Genero, stock,
                                 disponibles);
     }
+
+    int getDisponibles() const { return disponibles; }
+
+    void setDisponibles(int disp) { disponibles = disp; }
 };
 
 // Clase Tesis
@@ -348,7 +400,245 @@ public:
                               Carrera, AutorNom, AutorApe,
                               stock, disponibles);
     }
+
+    int getDisponibles() const { return disponibles; }
+
+    void setDisponibles(int disp) { disponibles = disp; }
 };
+
+//Clase Prestamo
+class Prestamo {
+private:
+    int idPrestamo;
+    int idUsuario;
+    int idPublicacion;
+    int tipoPublicacion; // 0=Tesis, 1=Libro, 2=Revista
+    string fechaPrestamo;
+    string fechaDevolucion;
+    string estado;
+    static DatabaseManager db;
+
+public:
+    Prestamo(int idUser, int idPub, int tipoPub, const string& fechaPrest = "", const string& fechaDev = "", const string& est = "Activo")
+        : idUsuario(idUser), idPublicacion(idPub), tipoPublicacion(tipoPub), fechaPrestamo(fechaPrest),
+          fechaDevolucion(fechaDev), estado(est) {
+        idPrestamo = 0; // Se asignará desde la base de datos
+    }
+
+    bool guardarEnDB() {
+        return db.insertarPrestamo(idUsuario, idPublicacion, tipoPublicacion, fechaPrestamo, fechaDevolucion, estado);
+    }
+
+    static vector<vector<string>> obtenerHistorialUsuario(int idUsuario) {
+        return db.obtenerPrestamosUsuario(idUsuario);
+    }
+
+    // Getters
+    int getIdUsuario() const { return idUsuario; }
+    int getIdPublicacion() const { return idPublicacion; }
+    int getTipoPublicacion() const { return tipoPublicacion; }
+    string getFechaPrestamo() const { return fechaPrestamo; }
+    string getFechaDevolucion() const { return fechaDevolucion; }
+    string getEstado() const { return estado; }
+};
+
+DatabaseManager Prestamo::db;
+
+// Clase Usuario
+class Usuario {
+private:
+    int ID_Usuario;
+    string Nombre_Usuario;
+    string Apellido_Usuario;
+    string DNI_Usuario;
+    string Direccion;
+    string Telefono;
+    string Mail;
+    static DatabaseManager db;
+
+public:
+    Usuario(int id, const string& nombre, const string& apellido, const string& dni,
+            const string& direccion, const string& telefono, const string& mail)
+        : ID_Usuario(id), Nombre_Usuario(nombre), Apellido_Usuario(apellido),
+          DNI_Usuario(dni), Direccion(direccion), Telefono(telefono), Mail(mail) {}
+
+    // Guardar usuario en la base de datos
+    bool guardarEnDB() {
+        return db.insertarUsuario(ID_Usuario, Nombre_Usuario, Apellido_Usuario, DNI_Usuario, Direccion, Telefono, Mail);
+    }
+
+    // Realizar préstamo
+    bool realizarPrestamo(int idPublicacion, int tipoPublicacion) {
+        // Obtener fecha actual
+        time_t now = time(0);
+        tm* ltm = localtime(&now);
+        string fechaPrestamo = to_string(1900 + ltm->tm_year) + "-" +
+                              to_string(1 + ltm->tm_mon) + "-" +
+                              to_string(ltm->tm_mday);
+
+        // Calcular fecha de devolución (15 días después)
+        tm fechaDev = *ltm;
+        fechaDev.tm_mday += 15;
+        mktime(&fechaDev);
+        string fechaDevolucion = to_string(1900 + fechaDev.tm_year) + "-" +
+                                to_string(1 + fechaDev.tm_mon) + "-" +
+                                to_string(fechaDev.tm_mday);
+
+        // Crear y guardar préstamo
+        Prestamo prestamo(ID_Usuario, idPublicacion, tipoPublicacion, fechaPrestamo, fechaDevolucion);
+        return prestamo.guardarEnDB();
+    }
+
+    // Calcular días restantes de préstamo
+    int calcularDiasRestantes(const string& fechaDevolucion) {
+        time_t now = time(0);
+        tm* ltm = localtime(&now);
+
+        // Convertir fecha de devolución a time_t
+        tm fechaDev = {};
+        sscanf(fechaDevolucion.c_str(), "%d-%d-%d", &fechaDev.tm_year, &fechaDev.tm_mon, &fechaDev.tm_mday);
+        fechaDev.tm_year -= 1900;
+        fechaDev.tm_mon -= 1;
+        time_t tiempoDev = mktime(&fechaDev);
+
+        // Calcular diferencia en días
+        double diferencia = difftime(tiempoDev, now);
+        return static_cast<int>(diferencia / (60 * 60 * 24));
+    }
+
+    // Enviar notificación por email
+    void enviarNotificacion(const string& tituloPublicacion, int diasRestantes, const string& recomendacion) {
+        cout << "\n=== NOTIFICACIÓN POR EMAIL ===" << endl;
+        cout << "Para: " << Mail << endl;
+        cout << "Asunto: Recordatorio de préstamo - " << tituloPublicacion << endl;
+        cout << "Hola " << Nombre_Usuario << " " << Apellido_Usuario << "," << endl;
+        cout << "Te recordamos que el préstamo de '" << tituloPublicacion << "'" << endl;
+        cout << "tiene " << diasRestantes << " días restantes para su devolución." << endl;
+
+        if (!recomendacion.empty()) {
+            cout << "Recomendación: " << recomendacion << endl;
+        }
+
+        cout << "Saludos cordiales,\nBiblioteca" << endl;
+        cout << "==============================\n" << endl;
+    }
+
+    // Generar recomendación basada en historial
+    string generarRecomendacion() {
+        auto historial = Prestamo::obtenerHistorialUsuario(ID_Usuario);
+        map<string, int> generosFrecuentes;
+
+        // Analizar géneros de préstamos anteriores
+        for (const auto& prestamo : historial) {
+            int tipo = stoi(prestamo[3]); // Tipo_Publicacion
+            int idPub = stoi(prestamo[2]); // ID_Publicacion
+
+            // Consultar el género según el tipo
+            string sql;
+            if (tipo == 1) { // Libro
+                sql = "SELECT Genero FROM libros WHERE ID_Libro = " + to_string(idPub);
+            } else if (tipo == 2) { // Revista
+                sql = "SELECT Genero FROM revista WHERE ID_Revista = " + to_string(idPub);
+            }
+
+            auto resultado = db.ejecutarConsulta(sql);
+            if (!resultado.empty() && !resultado[0][0].empty()) {
+                generosFrecuentes[resultado[0][0]]++;
+            }
+        }
+
+        // Encontrar género más frecuente
+        if (!generosFrecuentes.empty()) {
+            string generoFavorito;
+            int maxFrecuencia = 0;
+            for (const auto& par : generosFrecuentes) {
+                if (par.second > maxFrecuencia) {
+                    maxFrecuencia = par.second;
+                    generoFavorito = par.first;
+                }
+            }
+
+            // Buscar recomendación del mismo género
+            string sql = "SELECT Titulo FROM libros WHERE Genero = '" + generoFavorito +
+                        "' AND Cantidad_Disponible > 0 LIMIT 1";
+            auto recomendacion = db.ejecutarConsulta(sql);
+            if (!recomendacion.empty()) {
+                return "Basado en tus intereses en " + generoFavorito +
+                       ", te recomendamos: " + recomendacion[0][0];
+            }
+        }
+
+        return "Te recomendamos explorar nuestras novedades literarias.";
+    }
+
+    // Verificar préstamos próximos a vencer
+    void verificarPrestamosProximos() {
+        auto prestamos = Prestamo::obtenerHistorialUsuario(ID_Usuario);
+
+        for (const auto& prestamo : prestamos) {
+            if (prestamo[6] == "Activo") { // Estado activo
+                int diasRestantes = calcularDiasRestantes(prestamo[5]); // Fecha_Devolucion
+
+                if (diasRestantes <= 3 && diasRestantes > 0) {
+                    // Obtener título de la publicación
+                    string titulo = "Publicación ID: " + prestamo[2];
+                    int tipo = stoi(prestamo[3]);
+                    int idPub = stoi(prestamo[2]);
+
+                    string sql;
+                    if (tipo == 1) sql = "SELECT Titulo FROM libros WHERE ID_Libro = " + to_string(idPub);
+                    else if (tipo == 2) sql = "SELECT Titulo FROM revista WHERE ID_Revista = " + to_string(idPub);
+                    else if (tipo == 0) sql = "SELECT Titulo FROM tesis WHERE ID_Tesis = " + to_string(idPub);
+
+                    auto resultado = db.ejecutarConsulta(sql);
+                    if (!resultado.empty()) {
+                        titulo = resultado[0][0];
+                    }
+
+                    string recomendacion = generarRecomendacion();
+                    enviarNotificacion(titulo, diasRestantes, recomendacion);
+                }
+            }
+        }
+    }
+
+    // Mostrar información del usuario
+    void mostrarInformacion() {
+        cout << "\n=== INFORMACIÓN DEL USUARIO ===" << endl;
+        cout << "ID: " << ID_Usuario << endl;
+        cout << "Nombre: " << Nombre_Usuario << " " << Apellido_Usuario << endl;
+        cout << "DNI: " << DNI_Usuario << endl;
+        cout << "Dirección: " << Direccion << endl;
+        cout << "Teléfono: " << Telefono << endl;
+        cout << "Email: " << Mail << endl;
+
+        // Mostrar préstamos activos
+        auto prestamos = Prestamo::obtenerHistorialUsuario(ID_Usuario);
+        cout << "Préstamos activos: ";
+        int activos = 0;
+        for (const auto& prestamo : prestamos) {
+            if (prestamo[6] == "Activo") activos++;
+        }
+        cout << activos << endl;
+    }
+
+    // Getters
+    int getId() const { return ID_Usuario; }
+    string getNombre() const { return Nombre_Usuario; }
+    string getApellido() const { return Apellido_Usuario; }
+    string getMail() const { return Mail; }
+
+    // Método estático para obtener usuario por ID
+    static Usuario* obtenerPorId(int id) {
+        auto resultados = db.ejecutarConsulta("SELECT * FROM usuarios WHERE ID_Usuario = " + to_string(id));
+        if (resultados.empty()) return nullptr;
+
+        return new Usuario(stoi(resultados[0][0]), resultados[0][1], resultados[0][2],
+                          resultados[0][3], resultados[0][4], resultados[0][5], resultados[0][6]);
+    }
+};
+
+DatabaseManager Usuario::db;
 
 // Menus de Biblioteca adaptar
 class SistemaBiblioteca {
@@ -364,9 +654,11 @@ public:
             cout << "2. Gestion de Revistas" << endl;
             cout << "3. Gestion de Tesis" << endl;
             cout << "4. Gestion de Usuarios" << endl;
-            cout << "5. Mostrar Todo el Inventario" << endl;
-            cout << "6. Cargar Datos de Ejemplo" << endl;
-            cout << "7. Salir" << endl;
+            cout << "5. Gestion de Prestamos" << endl;
+            cout << "6. Mostrar Todo el Inventario" << endl;
+            cout << "7. Cargar Datos de Ejemplo" << endl;
+            cout << "8. Verificar Notificaciones" << endl;
+            cout << "9. Salir" << endl;
             cout << "Seleccione una opcion: ";
             cin >> opcion;
             cin.ignore();
@@ -376,13 +668,16 @@ public:
                 case 2: menuRevistas(); break;
                 case 3: menuTesis(); break;
                 case 4: menuUsuarios(); break;
-                case 5: mostrarTodo(); break;
-                case 6: cargarDatosEjemplo(); break;
-                case 7: cout << "Hasta luego" << endl; break;
+                case 5: menuPrestamos(); break;
+                case 6: mostrarTodo(); break;
+                case 7: cargarDatosEjemplo(); break;
+                case 8: verificarNotificaciones(); break;
+                case 9: cout << "Hasta luego" << endl; break;
                 default: cout << "Opcion inválida!" << endl;
             }
-        } while (opcion != 7);
+        } while (opcion != 9);
     }
+
 
 private:
     void menuLibros() {
@@ -435,7 +730,8 @@ private:
         auto libros = db.obtenerTodosLosLibros();
         cout << "\n=== LISTA DE LIBROS ===" << endl;
         for (const auto& libro : libros) {
-            cout << "ID: " << libro[0] << " | Título: " << libro[1] << " | Autor: " << libro[4] << " " << libro[5] << endl;
+            cout << "ID: " << libro[0] << " | Título: " << libro[1] << " | Autor: " << libro[4] << " " << libro[5]
+                 << " | Disponibles: " << libro[8] << "/" << libro[7] << endl;
         }
     }
 
@@ -449,9 +745,206 @@ private:
 
         cout << "\n=== RESULTADOS DE BÚSQUEDA ===" << endl;
         for (const auto& libro : resultados) {
-            cout << "ID: " << libro[0] << " | Título: " << libro[1] << " | Autor: " << libro[4] << " " << libro[5] << endl;
+            cout << "ID: " << libro[0] << " | Título: " << libro[1] << " | Autor: " << libro[4] << " " << libro[5]
+                 << " | Disponibles: " << libro[8] << "/" << libro[7] << endl;
         }
     }
+
+    void menuUsuarios() {
+        int opcion;
+        do {
+            cout << "\n=== GESTIÓN DE USUARIOS ===" << endl;
+            cout << "1. Agregar Usuario" << endl;
+            cout << "2. Mostrar Todos los Usuarios" << endl;
+            cout << "3. Buscar Usuario por ID" << endl;
+            cout << "4. Mostrar Información de Usuario" << endl;
+            cout << "5. Volver al Menú Principal" << endl;
+            cout << "Seleccione: ";
+            cin >> opcion;
+            cin.ignore();
+
+            switch (opcion) {
+                case 1: agregarUsuario(); break;
+                case 2: mostrarUsuarios(); break;
+                case 3: buscarUsuario(); break;
+                case 4: mostrarInfoUsuario(); break;
+                case 5: break;
+                default: cout << "Opcion inválida!" << endl;
+            }
+        } while (opcion != 5);
+    }
+
+    void agregarUsuario() {
+        string nombre, apellido, dni, direccion, telefono, mail;
+        int id;
+
+        cout << "ID Usuario: "; cin >> id;
+        cin.ignore();
+        cout << "Nombre: "; getline(cin, nombre);
+        cout << "Apellido: "; getline(cin, apellido);
+        cout << "DNI: "; getline(cin, dni);
+        cout << "Dirección: "; getline(cin, direccion);
+        cout << "Teléfono: "; getline(cin, telefono);
+        cout << "Email: "; getline(cin, mail);
+
+        Usuario usuario(id, nombre, apellido, dni, direccion, telefono, mail);
+        if (usuario.guardarEnDB()) {
+            cout << "Usuario agregado exitosamente!" << endl;
+        } else {
+            cout << "Error al guardar el usuario." << endl;
+        }
+    }
+
+    void mostrarUsuarios() {
+        auto usuarios = db.obtenerTodosLosUsuarios();
+        cout << "\n=== LISTA DE USUARIOS ===" << endl;
+        for (const auto& usuario : usuarios) {
+            cout << "ID: " << usuario[0] << " | Nombre: " << usuario[1] << " " << usuario[2]
+                 << " | DNI: " << usuario[3] << " | Email: " << usuario[6] << endl;
+        }
+    }
+
+    void buscarUsuario() {
+        int id;
+        cout << "Ingrese ID de usuario a buscar: ";
+        cin >> id;
+
+        auto usuario = Usuario::obtenerPorId(id);
+        if (usuario) {
+            usuario->mostrarInformacion();
+            delete usuario;
+        } else {
+            cout << "Usuario no encontrado." << endl;
+        }
+    }
+
+    void mostrarInfoUsuario() {
+        int id;
+        cout << "Ingrese ID de usuario: ";
+        cin >> id;
+
+        auto usuario = Usuario::obtenerPorId(id);
+        if (usuario) {
+            usuario->mostrarInformacion();
+
+            // Mostrar préstamos del usuario
+            auto prestamos = db.obtenerPrestamosUsuario(id);
+            if (!prestamos.empty()) {
+                cout << "\n--- PRÉSTAMOS ---" << endl;
+                for (const auto& prestamo : prestamos) {
+                    cout << "Publicación ID: " << prestamo[2] << " | Tipo: "
+                         << (prestamo[3] == "0" ? "Tesis" : prestamo[3] == "1" ? "Libro" : "Revista")
+                         << " | Devolución: " << prestamo[5] << " | Estado: " << prestamo[6] << endl;
+                }
+            }
+            delete usuario;
+        } else {
+            cout << "Usuario no encontrado." << endl;
+        }
+    }
+
+    void menuPrestamos() {
+        int opcion;
+        do {
+            cout << "\n=== GESTIÓN DE PRÉSTAMOS ===" << endl;
+            cout << "1. Realizar Préstamo" << endl;
+            cout << "2. Mostrar Todos los Préstamos" << endl;
+            cout << "3. Ver Préstamos de Usuario" << endl;
+            cout << "4. Volver al Menú Principal" << endl;
+            cout << "Seleccione: ";
+            cin >> opcion;
+            cin.ignore();
+
+            switch (opcion) {
+                case 1: realizarPrestamo(); break;
+                case 2: mostrarPrestamos(); break;
+                case 3: verPrestamosUsuario(); break;
+                case 4: break;
+                default: cout << "Opcion inválida!" << endl;
+            }
+        } while (opcion != 4);
+    }
+
+    void realizarPrestamo() {
+        int idUsuario, idPublicacion, tipoPublicacion;
+
+        cout << "ID Usuario: "; cin >> idUsuario;
+        cout << "ID Publicación: "; cin >> idPublicacion;
+        cout << "Tipo (0=Tesis, 1=Libro, 2=Revista): "; cin >> tipoPublicacion;
+
+        auto usuario = Usuario::obtenerPorId(idUsuario);
+        if (usuario) {
+            if (usuario->realizarPrestamo(idPublicacion, tipoPublicacion)) {
+                cout << "Préstamo realizado exitosamente!" << endl;
+
+                // Actualizar disponibilidad
+                string sql;
+                if (tipoPublicacion == 1)
+                    sql = "SELECT Cantidad_Disponible FROM libros WHERE ID_Libro = " + to_string(idPublicacion);
+                else if (tipoPublicacion == 2)
+                    sql = "SELECT Cantidad_Disponible FROM revista WHERE ID_Revista = " + to_string(idPublicacion);
+                else if (tipoPublicacion == 0)
+                    sql = "SELECT Cantidad_Disponible FROM tesis WHERE ID_Tesis = " + to_string(idPublicacion);
+
+                auto resultado = db.ejecutarConsulta(sql);
+                if (!resultado.empty()) {
+                    int disponibles = stoi(resultado[0][0]);
+                    db.actualizarDisponibilidad(tipoPublicacion, idPublicacion, disponibles - 1);
+                }
+            } else {
+                cout << "Error al realizar el préstamo." << endl;
+            }
+            delete usuario;
+        } else {
+            cout << "Usuario no encontrado." << endl;
+        }
+    }
+
+    void mostrarPrestamos() {
+        auto prestamos = db.obtenerTodosLosPrestamos();
+        cout << "\n=== TODOS LOS PRÉSTAMOS ===" << endl;
+        for (const auto& prestamo : prestamos) {
+            cout << "Usuario: " << prestamo[1] << " | Publicación: " << prestamo[2]
+                 << " | Tipo: " << (prestamo[3] == "0" ? "Tesis" : prestamo[3] == "1" ? "Libro" : "Revista")
+                 << " | Préstamo: " << prestamo[4] << " | Devolución: " << prestamo[5]
+                 << " | Estado: " << prestamo[6] << endl;
+        }
+    }
+
+    void verPrestamosUsuario() {
+        int idUsuario;
+        cout << "ID Usuario: ";
+        cin >> idUsuario;
+
+        auto prestamos = db.obtenerPrestamosUsuario(idUsuario);
+        if (!prestamos.empty()) {
+            cout << "\n=== PRÉSTAMOS DEL USUARIO " << idUsuario << " ===" << endl;
+            for (const auto& prestamo : prestamos) {
+                cout << "Publicación: " << prestamo[2] << " | Tipo: "
+                     << (prestamo[3] == "0" ? "Tesis" : prestamo[3] == "1" ? "Libro" : "Revista")
+                     << " | Préstamo: " << prestamo[4] << " | Devolución: " << prestamo[5]
+                     << " | Estado: " << prestamo[6] << endl;
+            }
+        } else {
+            cout << "No se encontraron préstamos para este usuario." << endl;
+        }
+    }
+
+    void verificarNotificaciones() {
+        auto usuarios = db.obtenerTodosLosUsuarios();
+        cout << "\n=== VERIFICANDO NOTIFICACIONES ===" << endl;
+
+        for (const auto& usuarioData : usuarios) {
+            int idUsuario = stoi(usuarioData[0]);
+            auto usuario = Usuario::obtenerPorId(idUsuario);
+            if (usuario) {
+                usuario->verificarPrestamosProximos();
+                delete usuario;
+            }
+        }
+        cout << "Verificación completada." << endl;
+    }
+
 
     void menuRevistas() {
         // Similar a menuLibros pero para revistas
@@ -463,37 +956,37 @@ private:
         cout << "Gestion de Tesis (implementacion similar a libros)" << endl;
     }
 
-    void menuUsuarios() {
-        // Gestion de usuarios
-        cout << "Gestion de Usuarios" << endl;
-    }
-
     void mostrarTodo() {
         cout << "\n=== INVENTARIO COMPLETO ===" << endl;
 
         cout << "\n--- LIBROS ---" << endl;
         auto libros = db.obtenerTodosLosLibros();
         for (const auto& libro : libros) {
-            cout << "L" << libro[0] << ": " << libro[1] << " (" << libro[4] << " " << libro[5] << ")" << endl;
+            cout << "L" << libro[0] << ": " << libro[1] << " (" << libro[4] << " " << libro[5] << ") - Disp: " << libro[8] << endl;
         }
 
         cout << "\n--- REVISTAS ---" << endl;
         auto revistas = db.obtenerTodasLasRevistas();
         for (const auto& revista : revistas) {
-            cout << "R" << revista[0] << ": " << revista[1] << " - N°" << revista[4] << endl;
+            cout << "R" << revista[0] << ": " << revista[1] << " - N°" << revista[4] << " - Disp: " << revista[8] << endl;
         }
 
         cout << "\n--- TESIS ---" << endl;
         auto tesis = db.obtenerTodasLasTesis();
         for (const auto& tesis_item : tesis) {
-            cout << "T" << tesis_item[0] << ": " << tesis_item[1] << " (" << tesis_item[3] << ")" << endl;
+            cout << "T" << tesis_item[0] << ": " << tesis_item[1] << " (" << tesis_item[3] << ") - Disp: " << tesis_item[8] << endl;
+        }
+
+        cout << "\n--- USUARIOS ---" << endl;
+        auto usuarios = db.obtenerTodosLosUsuarios();
+        for (const auto& usuario : usuarios) {
+            cout << "U" << usuario[0] << ": " << usuario[1] << " " << usuario[2] << endl;
         }
     }
 
     void cargarDatosEjemplo() {
         cout << "Cargando datos de ejemplo..." << endl;
 
-        // Aquí podrías cargar datos de tus archivos CSV
         // Por ahora solo un ejemplo
         db.insertarLibro(100, "Ejemplo de Libro", "2024", "Editorial Ejemplo",
                         "Autor", "Ejemplo", "Ficcion", 5, 3);
