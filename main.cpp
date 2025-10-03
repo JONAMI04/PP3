@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-#include <sqlite3.h>
+#include "sqlite3.h"
 #include <memory>
 using namespace std;
 
@@ -199,7 +199,7 @@ public:
     }
 };
 
-// Clase publicaciones abstracta (adaptada a tus datos)
+// Clase publicaciones abstracta
 class Publicaciones {
 protected:
     static int Total_Publicaciones;
@@ -241,7 +241,7 @@ public:
 int Publicaciones::Total_Publicaciones = 0;
 DatabaseManager Publicaciones::db;
 
-// Clase Libro adaptada a tu estructura
+// Clase Libro
 class Libro : public Publicaciones {
 private:
     string Editorial;
