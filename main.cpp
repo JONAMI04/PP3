@@ -1,11 +1,11 @@
+//#include <algorithm>
+//#include <memory>
 #include <iostream>
 #include <string>
 #include <vector>
-//#include <algorithm>
 #include <ctime>
 #include <map>
 #include "sqlite3.h"
-//#include <memory>
 using namespace std;
 
 // Clase para manejar la base de datos
@@ -15,6 +15,7 @@ private:
     string dbPath;
 
 public:
+    //ubicacion de la base de datos "C:\\Users\\nahue\\Downloads\\biblioteca.db"
     DatabaseManager(const string& path = "C:\\Users\\nahue\\Downloads\\biblioteca.db") : db(nullptr), dbPath(path) {
         if (abrirDB(dbPath)) {
             cout << "Base de datos abierta exitosamente: " << dbPath << endl;
@@ -1001,7 +1002,7 @@ private:
 int main() {
     cout << "Iniciando Sistema de Biblioteca..." << endl;
     cout << "Conectando a la base de datos..." << endl;
-
+    //integrar el menu de mati
     SistemaBiblioteca sistema;
     sistema.mostrarMenuPrincipal();
 
