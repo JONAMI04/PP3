@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\mocs_compilation_Debug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\mainwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\EWIEGA46WW_Debug\qrc_resources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\mocs_compilation_Release.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\EWIEGA46WW_Release\qrc_resources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\mocs_compilation_MinSizeRel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\EWIEGA46WW_MinSizeRel\qrc_resources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\mocs_compilation_RelWithDebInfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\EWIEGA46WW_RelWithDebInfo\qrc_resources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\mainwindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\include_Debug\ui_mainwindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\include_Debug\ui_material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\include_Release\ui_mainwindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\include_Release\ui_material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\include_MinSizeRel\ui_mainwindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\include_MinSizeRel\ui_material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\include_RelWithDebInfo\ui_mainwindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\include_RelWithDebInfo\ui_material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\CMakeFiles\e5adfa876856020db2844feca044f1cc\autouic_(CONFIG).stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\CMakeFiles\df3890ae1e5e9581a85f32082b860e31\qrc_resources.cpp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\mainwindow.ui">
+      <Filter>Forms</Filter>
+    </None>
+    <None Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\Biblioteca_es_AR.ts" />
+    <None Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\resources.qrc">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\material.ui">
+      <Filter>Forms</Filter>
+    </None>
+    <None Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\autouic_Debug.stamp" />
+    <None Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\autouic_Release.stamp" />
+    <None Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\autouic_MinSizeRel.stamp" />
+    <None Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\Biblioteca_autogen\autouic_RelWithDebInfo.stamp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{D378247A-B4D6-3C9A-8E93-CC319EDE3CCF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Forms">
+      <UniqueIdentifier>{A226A416-7955-3803-AD7F-B96EB32D69C3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{8C062EFA-970B-3752-BCC9-94D97A3D1D39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{F5B9E8F7-EB5C-37CA-BEE1-0C5BFD8D6FB5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{D5A2439C-08A6-33F1-8FDB-CBC22DF1B83B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

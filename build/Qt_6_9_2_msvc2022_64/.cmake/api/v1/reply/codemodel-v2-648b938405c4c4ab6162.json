@@ -1,0 +1,205 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-cce407c91f0d7dd9ab3f.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Biblioteca",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Biblioteca::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Biblioteca-Debug-fe8e34c807ff4e2dde5a.json",
+					"name" : "Biblioteca",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Biblioteca_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Biblioteca_autogen-Debug-d1ac2a56848ae39418a7.json",
+					"name" : "Biblioteca_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Biblioteca_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Biblioteca_autogen_timestamp_deps-Debug-2fa79d1ff76564570332.json",
+					"name" : "Biblioteca_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		},
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Release-a8b5100d6bcafd85e05a.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Biblioteca",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Biblioteca::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Biblioteca-Release-492a3d334047f66427de.json",
+					"name" : "Biblioteca",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Biblioteca_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Biblioteca_autogen-Release-26e134f81ad40d776881.json",
+					"name" : "Biblioteca_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Biblioteca_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Biblioteca_autogen_timestamp_deps-Release-2fa79d1ff76564570332.json",
+					"name" : "Biblioteca_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		},
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-RelWithDebInfo-c339561b4d2fb18603c6.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "RelWithDebInfo",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Biblioteca",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Biblioteca::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Biblioteca-RelWithDebInfo-ff99567366a37f45659c.json",
+					"name" : "Biblioteca",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Biblioteca_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Biblioteca_autogen-RelWithDebInfo-dffa31e82de0828db2d4.json",
+					"name" : "Biblioteca_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Biblioteca_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Biblioteca_autogen_timestamp_deps-RelWithDebInfo-2fa79d1ff76564570332.json",
+					"name" : "Biblioteca_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64",
+		"source" : "C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 8
+	}
+}

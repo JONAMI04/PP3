@@ -1,0 +1,35 @@
+###########################################
+# Directorios de compilación y cache
+###########################################
+build/
+*.pro.user
+*.pro.user.*
+CMakeLists.txt.user
+CMakeLists.txt.user.*
+*.cbp
+*.kdev4
+
+###########################################
+# Archivos de depuración y logs
+###########################################
+*.ts
+*.qm
+*~
+*.bak
+*.orig
+*.rej
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.a
+*.pdb
+
+###########################################
+# Configuración específica de IDE/Sistema
+###########################################
+.qtc_clangd/
+.qmake.stash
+.vscode/
+desktop.ini

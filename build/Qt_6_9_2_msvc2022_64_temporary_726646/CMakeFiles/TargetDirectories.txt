@@ -1,0 +1,4 @@
+C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64_temporary_726646/CMakeFiles/Biblioteca.dir
+C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64_temporary_726646/CMakeFiles/INSTALL.dir
+C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64_temporary_726646/CMakeFiles/ALL_BUILD.dir
+C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64_temporary_726646/CMakeFiles/ZERO_CHECK.dir

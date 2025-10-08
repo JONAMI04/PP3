@@ -1,0 +1,7 @@
+C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/CMakeFiles/Biblioteca.dir
+C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/CMakeFiles/edit_cache.dir
+C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/CMakeFiles/rebuild_cache.dir
+C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/CMakeFiles/install.dir
+C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/CMakeFiles/install/local.dir
+C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/CMakeFiles/Biblioteca_autogen_timestamp_deps.dir
+C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/CMakeFiles/Biblioteca_autogen.dir

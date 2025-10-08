@@ -1,0 +1,34 @@
+# ninja log v6
+518	10237	7805580227684378	CMakeFiles/Biblioteca.dir/Debug/Biblioteca_autogen/EWIEGA46WW_Debug/qrc_resources.cpp.obj	5b50feb31b277f3c
+23	256	7805580222745653	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/CMakeFiles/cmake.verify_globs	61f1389b0e2ac2cf
+502	4186	7805580227536596	CMakeFiles/Biblioteca.dir/Debug/Biblioteca_autogen/mocs_compilation_Debug.cpp.obj	cbff6199f69de702
+1670	2806	7798533270385394	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/Biblioteca_autogen/EWIEGA46WW_Debug/qrc_resources.cpp	63a7d47aee29a9c5
+281	501	7805580225335212	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/Biblioteca_autogen/timestamp_Debug	cae5cb508c99b736
+618	3416	7805290385405279	CMakeFiles/impl-Release.ninja	1da72abe84a347a9
+281	501	7805580225335212	Biblioteca_autogen/timestamp_Debug	cae5cb508c99b736
+508	4204	7805580227589981	CMakeFiles/Biblioteca.dir/Debug/main.cpp.obj	6cc013d143cf0b7d
+281	501	7805580225335212	Biblioteca_autogen/mocs_compilation_Debug.cpp	cae5cb508c99b736
+1670	2806	7798533270385394	Biblioteca_autogen/EWIEGA46WW_Debug/qrc_resources.cpp	63a7d47aee29a9c5
+281	501	7805580225335212	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/Biblioteca_autogen/mocs_compilation_Debug.cpp	cae5cb508c99b736
+803	6203	7805289968935719	CMakeFiles/Biblioteca.dir/Debug/material.cpp.obj	37af25932f6f9a9f
+513	4557	7805580227643952	CMakeFiles/Biblioteca.dir/Debug/mainwindow.cpp.obj	dd76e31cb70ef3dd
+10238	10484	7805580324900006	Debug/Biblioteca.exe	8fc445d9d59ef492
+618	3416	7805290385339272	CMakeFiles/impl-Debug.ninja	1da72abe84a347a9
+618	3416	7805290385405279	build-Debug.ninja	1da72abe84a347a9
+618	3416	7805290385405279	build-Release.ninja	1da72abe84a347a9
+618	3416	7805290385339272	build.ninja	1da72abe84a347a9
+618	3416	7805290385405279	CMakeFiles/impl-RelWithDebInfo.ninja	1da72abe84a347a9
+618	3416	7805290385405279	build-RelWithDebInfo.ninja	1da72abe84a347a9
+879	5260	7805174326397253	CMakeFiles/Biblioteca.dir/Debug/tabwidget.cpp.obj	7c6e3105ff20c642
+92	372	7805994887679500	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/CMakeFiles/cmake.verify_globs	61f1389b0e2ac2cf
+435	2914	7805994891106333	CMakeFiles/Biblioteca.dir/Debug/Biblioteca_autogen/mocs_compilation_Debug.cpp.obj	cbff6199f69de702
+440	2922	7805994891149839	CMakeFiles/Biblioteca.dir/Debug/main.cpp.obj	6cc013d143cf0b7d
+444	3364	7805994891193832	CMakeFiles/Biblioteca.dir/Debug/mainwindow.cpp.obj	dd76e31cb70ef3dd
+449	7362	7805994891238068	CMakeFiles/Biblioteca.dir/Debug/Biblioteca_autogen/EWIEGA46WW_Debug/qrc_resources.cpp.obj	5b50feb31b277f3c
+7363	7625	7805994960385806	Debug/Biblioteca.exe	8fc445d9d59ef492
+108	450	7810215378868718	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64/CMakeFiles/cmake.verify_globs	61f1389b0e2ac2cf
+531	3500	7810215383100955	CMakeFiles/Biblioteca.dir/Debug/Biblioteca_autogen/mocs_compilation_Debug.cpp.obj	cbff6199f69de702
+536	3509	7810215383155351	CMakeFiles/Biblioteca.dir/Debug/main.cpp.obj	6cc013d143cf0b7d
+542	3916	7810215383205357	CMakeFiles/Biblioteca.dir/Debug/mainwindow.cpp.obj	dd76e31cb70ef3dd
+548	8675	7810215383268096	CMakeFiles/Biblioteca.dir/Debug/Biblioteca_autogen/EWIEGA46WW_Debug/qrc_resources.cpp.obj	5b50feb31b277f3c
+8675	12410	7810215464542255	Debug/Biblioteca.exe	8fc445d9d59ef492

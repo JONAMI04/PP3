@@ -1,0 +1,47 @@
+# ninja log v6
+14	98	7794373597726915	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/CMakeFiles/cmake.verify_globs	fe93c20700b0dd2f
+150	453	7794373482428666	Biblioteca_autogen/timestamp	c8fb5411f6c66cf8
+130	3629	7794373598887398	CMakeFiles/Biblioteca.dir/mainwindow.cpp.obj	fc2e2ec7447f41bb
+150	453	7794373482428666	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/Biblioteca_autogen/mocs_compilation.cpp	c8fb5411f6c66cf8
+150	453	7794373482428666	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/Biblioteca_autogen/timestamp	c8fb5411f6c66cf8
+150	453	7794373482428666	Biblioteca_autogen/mocs_compilation.cpp	c8fb5411f6c66cf8
+121	3581	7794373598803922	CMakeFiles/Biblioteca.dir/Biblioteca_autogen/mocs_compilation.cpp.obj	f7ef69785a0dfe02
+126	3597	7794373598803922	CMakeFiles/Biblioteca.dir/main.cpp.obj	24c9406343e7bc
+3630	4033	7794373633895277	Biblioteca.exe	cef2a3314d191443
+98	1227	7794374280294077	build.ninja	1b3155bfe94dab0b
+444	1628	7794298662657900	Biblioteca_autogen/EWIEGA46WW/qrc_resources.cpp	c476c713e133061
+444	1628	7794298662657900	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/Biblioteca_autogen/EWIEGA46WW/qrc_resources.cpp	c476c713e133061
+133	3613	7794373598892671	CMakeFiles/Biblioteca.dir/material.cpp.obj	2499a912f10622a9
+1646	12669	7794298663467848	CMakeFiles/Biblioteca.dir/Biblioteca_autogen/EWIEGA46WW/qrc_resources.cpp.obj	b68f7d81a99e175a
+16	120	7794380713593583	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/CMakeFiles/cmake.verify_globs	fe93c20700b0dd2f
+155	727	7794380719886215	Biblioteca_autogen/timestamp	c8fb5411f6c66cf8
+155	727	7794380719886215	Biblioteca_autogen/mocs_compilation.cpp	c8fb5411f6c66cf8
+155	727	7794380719886215	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/Biblioteca_autogen/timestamp	c8fb5411f6c66cf8
+155	727	7794380719886215	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/Biblioteca_autogen/mocs_compilation.cpp	c8fb5411f6c66cf8
+728	4265	7794380720749154	CMakeFiles/Biblioteca.dir/Biblioteca_autogen/mocs_compilation.cpp.obj	f7ef69785a0dfe02
+734	4281	7794380720794307	CMakeFiles/Biblioteca.dir/main.cpp.obj	24c9406343e7bc
+744	4297	7794380720903152	CMakeFiles/Biblioteca.dir/material.cpp.obj	2499a912f10622a9
+739	4312	7794380720848376	CMakeFiles/Biblioteca.dir/mainwindow.cpp.obj	fc2e2ec7447f41bb
+4313	4710	7794380756584401	Biblioteca.exe	cef2a3314d191443
+13	100	7794382792409201	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/CMakeFiles/cmake.verify_globs	fe93c20700b0dd2f
+126	404	7794382793516537	Biblioteca_autogen/timestamp	c8fb5411f6c66cf8
+126	404	7794382793516537	Biblioteca_autogen/mocs_compilation.cpp	c8fb5411f6c66cf8
+126	404	7794382793516537	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/Biblioteca_autogen/timestamp	c8fb5411f6c66cf8
+126	404	7794382793516537	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/Biblioteca_autogen/mocs_compilation.cpp	c8fb5411f6c66cf8
+406	3986	7794382796328845	CMakeFiles/Biblioteca.dir/Biblioteca_autogen/mocs_compilation.cpp.obj	f7ef69785a0dfe02
+411	4001	7794382796412397	CMakeFiles/Biblioteca.dir/main.cpp.obj	24c9406343e7bc
+422	4017	7794382796509516	CMakeFiles/Biblioteca.dir/material.cpp.obj	2499a912f10622a9
+416	4032	7794382796412397	CMakeFiles/Biblioteca.dir/mainwindow.cpp.obj	fc2e2ec7447f41bb
+4033	4344	7794382832622646	Biblioteca.exe	cef2a3314d191443
+55	131	7795936879796769	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/CMakeFiles/cmake.verify_globs	fe93c20700b0dd2f
+161	3262	7795936880843911	CMakeFiles/Biblioteca.dir/Biblioteca_autogen/mocs_compilation.cpp.obj	f7ef69785a0dfe02
+175	3272	7795936880990252	CMakeFiles/Biblioteca.dir/material.cpp.obj	2499a912f10622a9
+166	3281	7795936880903341	CMakeFiles/Biblioteca.dir/main.cpp.obj	24c9406343e7bc
+171	3365	7795936880945209	CMakeFiles/Biblioteca.dir/mainwindow.cpp.obj	fc2e2ec7447f41bb
+3366	3732	7795936912895065	Biblioteca.exe	cef2a3314d191443
+52	140	7797288041771134	C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/CMakeFiles/cmake.verify_globs	fe93c20700b0dd2f
+189	1980	7797288043076882	CMakeFiles/Biblioteca.dir/Biblioteca_autogen/mocs_compilation.cpp.obj	f7ef69785a0dfe02
+200	1986	7797288043265373	CMakeFiles/Biblioteca.dir/material.cpp.obj	2499a912f10622a9
+193	1990	7797288043160998	CMakeFiles/Biblioteca.dir/main.cpp.obj	24c9406343e7bc
+196	2041	7797288043198280	CMakeFiles/Biblioteca.dir/mainwindow.cpp.obj	fc2e2ec7447f41bb
+2042	2253	7797288061684763	Biblioteca.exe	cef2a3314d191443

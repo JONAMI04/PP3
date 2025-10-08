@@ -1,0 +1,10 @@
+^C:\FIE\3ER AÑO\ANUALES\PARADIGMAS DE PROGRAMACION III\BIBLIOTECA\QT\BIBLIOTECA\BUILD\QT_6_9_2_MSVC2022_64_TEMPORARY_726646\CMAKEFILES\78CB954254381EDCC4A4F1034BABEE5B\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" "-SC:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca" "-BC:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64_temporary_726646" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/FIE/3er Año/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Qt_6_9_2_msvc2022_64_temporary_726646/Biblioteca.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

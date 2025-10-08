@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\FIE\3er Año\Anuales\Paradigmas de Programacion III\Biblioteca\QT\Biblioteca\build\Qt_6_9_2_msvc2022_64_temporary_726646\CMakeFiles\78cb954254381edcc4a4f1034babee5b\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{D378247A-B4D6-3C9A-8E93-CC319EDE3CCF}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,26 @@
+{
+	"BUILD_DIR" : "C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/Biblioteca_autogen",
+	"CMAKE_BINARY_DIR" : "C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug",
+	"CMAKE_CURRENT_BINARY_DIR" : "C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug",
+	"CMAKE_CURRENT_SOURCE_DIR" : "C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca",
+	"CMAKE_SOURCE_DIR" : "C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca",
+	"CROSS_CONFIG" : false,
+	"GENERATOR" : "Ninja",
+	"INCLUDE_DIR" : "C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/Biblioteca_autogen/include",
+	"INPUTS" : 
+	[
+		"C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/fondoLabel.png",
+		"C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/fondo.png"
+	],
+	"LOCK_FILE" : "C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/CMakeFiles/Biblioteca_autogen.dir/AutoRcc_resources_EWIEGA46WW_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "--no-zstd", "-name", "resources" ],
+	"OUTPUT_CHECKSUM" : "EWIEGA46WW",
+	"OUTPUT_NAME" : "qrc_resources.cpp",
+	"RCC_EXECUTABLE" : "C:/Qt/6.9.2/msvc2022_64/bin/rcc.exe",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/build/Desktop_Qt_6_9_2_MSVC2022_64bit-Debug/CMakeFiles/Biblioteca_autogen.dir/AutoRcc_resources_EWIEGA46WW_Used.txt",
+	"SOURCE" : "C:/FIE/3er A\u00f1o/Anuales/Paradigmas de Programacion III/Biblioteca/QT/Biblioteca/resources.qrc",
+	"USE_BETTER_GRAPH" : true,
+	"VERBOSITY" : 0
+}
