@@ -31,6 +31,26 @@ public:
         }
     }
 
+    bool actualizarValoracionPrestamo(int idPrestamo, int valoracion) {
+        string sql = "UPDATE prestamos SET Valoracion = " + to_string(valoracion) +
+                    "', Estado = 'Devuelto' WHERE ID_Prestamo = " +
+                    to_string(idPrestamo) + ";";
+        return ejecutarSQL(sql);
+    }
+
+    vector<vector<string>> obtenerPrestamosPorValoracion(int tipoPublicacion, int valoracionMinima) {
+        string sql = "SELECT * FROM prestamos WHERE Tipo_Publicacion = " +
+                    to_string(tipoPublicacion) + " AND Valoracion >= " +
+                    to_string(valoracionMinima) + " AND Valoracion > 0;";
+        return ejecutarConsulta(sql);
+    }
+
+    vector<vector<string>> obtenerPrestamosSinValorar(int idUsuario) {
+        string sql = "SELECT * FROM prestamos WHERE ID_Usuario = " +
+                    to_string(idUsuario) + " AND Estado = 'Devuelto' AND Valoracion = 0;";
+        return ejecutarConsulta(sql);
+    }
+
     bool abrirDB(const string& nombreDB) {
         int resultado = sqlite3_open(nombreDB.c_str(), &db);
         if (resultado != SQLITE_OK) {
@@ -143,6 +163,7 @@ public:
             "Fecha_Prestamo TEXT,"
             "Fecha_Devolucion TEXT,"
             "Estado TEXT,"
+            "Valoracion INTEGER DEFAULT 0," // Nuevo campo: 0 = sin valorar, 1-5 = estrellas
             "FOREIGN KEY(ID_Usuario) REFERENCES usuarios(ID_Usuario)"
             ");";
         ejecutarSQL(sql_prestamos);
@@ -188,10 +209,18 @@ public:
     }
 
     bool insertarPrestamo(int id_usuario, int id_publicacion, int tipo_publicacion,
-                         const string& fecha_prestamo, const string& fecha_devolucion, const string& estado) {
-        string sql = "INSERT INTO prestamos (ID_Usuario, ID_Publicacion, Tipo_Publicacion, Fecha_Prestamo, Fecha_Devolucion, Estado) "
+                     const string& fecha_prestamo, const string& fecha_devolucion,
+                     const string& estado, int valoracion = 0) {
+        string sql = "INSERT INTO prestamos (ID_Usuario, ID_Publicacion, Tipo_Publicacion, Fecha_Prestamo, Fecha_Devolucion, Estado, Valoracion) "
                     "VALUES (" + to_string(id_usuario) + ", " + to_string(id_publicacion) + ", " +
-                    to_string(tipo_publicacion) + ", '" + fecha_prestamo + "', '" + fecha_devolucion + "', '" + estado + "');";
+                    to_string(tipo_publicacion) + ", '" + fecha_prestamo + "', '" + fecha_devolucion +
+                    "', '" + estado + "', " + to_string(valoracion) + ");";
+        return ejecutarSQL(sql);
+    }
+
+    bool actualizarEstadoPrestamo(int idPrestamo, const string& nuevoEstado) {
+        string sql = "UPDATE prestamos SET Estado = '" + nuevoEstado +
+                    "' WHERE ID_Prestamo = " + to_string(idPrestamo) + ";";
         return ejecutarSQL(sql);
     }
 
@@ -218,6 +247,12 @@ public:
 
     vector<vector<string>> obtenerTodosLosPrestamos() {
         return ejecutarConsulta("SELECT * FROM prestamos;");
+    }
+
+    vector<vector<string>> obtenerPrestamosPorUsuarioYEstado(int idUsuario, const string& estado) {
+        string sql = "SELECT * FROM prestamos WHERE ID_Usuario = " +
+                    to_string(idUsuario) + " AND Estado = '" + estado + "';";
+        return ejecutarConsulta(sql);
     }
 
     bool actualizarDisponibilidad(int tipo, int id, int nueva_cantidad) {
@@ -420,30 +455,91 @@ private:
     string fechaPrestamo;
     string fechaDevolucion;
     string estado;
+    int valoracion; // Nuevo 0, prestado 1 a 5
     static DatabaseManager db;
 
 public:
-    Prestamo(int idUser, int idPub, int tipoPub, const string& fechaPrest = "", const string& fechaDev = "", const string& est = "Activo")
-        : idUsuario(idUser), idPublicacion(idPub), tipoPublicacion(tipoPub), fechaPrestamo(fechaPrest),
-          fechaDevolucion(fechaDev), estado(est) {
-        idPrestamo = 0; // Se asignará desde la base de datos
+    Prestamo(int idUser, int idPub, int tipoPub, const string& fechaPrest = "",
+             const string& fechaDev = "", const string& est = "Activo",
+             int val = 0)
+        : idUsuario(idUser), idPublicacion(idPub), tipoPublicacion(tipoPub),
+          fechaPrestamo(fechaPrest), fechaDevolucion(fechaDev), estado(est),
+          valoracion(val) {
+        idPrestamo = 0;
     }
 
     bool guardarEnDB() {
-        return db.insertarPrestamo(idUsuario, idPublicacion, tipoPublicacion, fechaPrestamo, fechaDevolucion, estado);
+        if (db.insertarPrestamo(idUsuario, idPublicacion, tipoPublicacion,
+                               fechaPrestamo, fechaDevolucion, estado,
+                               valoracion)) {
+            // Obtener el ID generado automáticamente
+            auto resultado = db.ejecutarConsulta("SELECT last_insert_rowid();");
+            if (!resultado.empty()) {
+                idPrestamo = stoi(resultado[0][0]);
+            }
+            return true;
+                               }
+        return false;
     }
 
     static vector<vector<string>> obtenerHistorialUsuario(int idUsuario) {
         return db.obtenerPrestamosUsuario(idUsuario);
     }
 
+    // Método para agregar valoración cuando se devuelve el préstamo
+    bool agregarValoracion(int val, const string& com = "") {
+        if (val < 0 || val > 5) {
+            cerr << "Error: La valoración debe estar entre 0 y 5" << endl;
+            return false;
+        }
+
+        valoracion = val;
+        estado = "Devuelto";
+
+        // Actualizar en la base de datos
+        string sql = "UPDATE prestamos SET Valoracion = " + to_string(valoracion) +
+                    "', Estado = 'Devuelto' WHERE ID_Prestamo = " +
+                    to_string(idPrestamo) + ";";
+        return db.ejecutarSQL(sql);
+    }
+
     // Getters
+    int getIdPrestamo() const { return idPrestamo; }
+    int getValoracion() const { return valoracion; }
     int getIdUsuario() const { return idUsuario; }
     int getIdPublicacion() const { return idPublicacion; }
     int getTipoPublicacion() const { return tipoPublicacion; }
     string getFechaPrestamo() const { return fechaPrestamo; }
     string getFechaDevolucion() const { return fechaDevolucion; }
     string getEstado() const { return estado; }
+    void setIdPrestamo(int id) { idPrestamo = id; }
+
+    static Prestamo* obtenerPorId(int idPrestamo) {
+        auto resultados = db.ejecutarConsulta(
+            "SELECT * FROM prestamos WHERE ID_Prestamo = " + to_string(idPrestamo));
+
+        if (resultados.empty()) {
+            return nullptr;
+        }
+
+        auto& prestamoData = resultados[0];
+
+        // Crear el objeto Prestamo
+        Prestamo* prestamo = new Prestamo(
+            stoi(prestamoData[1]),  // ID_Usuario
+            stoi(prestamoData[2]),  // ID_Publicacion
+            stoi(prestamoData[3]),  // Tipo_Publicacion
+            prestamoData[4],        // Fecha_Prestamo
+            prestamoData[5],        // Fecha_Devolucion
+            prestamoData[6],        // Estado
+            stoi(prestamoData[7])  // Valoracion
+        );
+
+        // Establecer el ID del préstamo
+        prestamo->idPrestamo = stoi(prestamoData[0]);
+
+        return prestamo;
+    }
 };
 
 DatabaseManager Prestamo::db;
@@ -854,7 +950,8 @@ private:
             cout << "1. Realizar Préstamo" << endl;
             cout << "2. Mostrar Todos los Préstamos" << endl;
             cout << "3. Ver Préstamos de Usuario" << endl;
-            cout << "4. Volver al Menú Principal" << endl;
+            cout << "4. Valorar Préstamo Devuelto" << endl; // Nueva opción
+            cout << "5. Volver al Menú Principal" << endl;
             cout << "Seleccione: ";
             cin >> opcion;
             cin.ignore();
@@ -863,10 +960,34 @@ private:
                 case 1: realizarPrestamo(); break;
                 case 2: mostrarPrestamos(); break;
                 case 3: verPrestamosUsuario(); break;
-                case 4: break;
+                case 4: valorarPrestamo(); break;
+                case 5: break;
                 default: cout << "Opcion inválida!" << endl;
             }
-        } while (opcion != 4);
+        } while (opcion != 5);
+    }
+
+    void valorarPrestamo() {
+        int idPrestamo, valoracion;
+
+        cout << "ID del Préstamo a valorar: ";
+        cin >> idPrestamo;
+
+        auto prestamo = Prestamo::obtenerPorId(idPrestamo);
+        if (!prestamo) {
+            cout << "Préstamo no encontrado." << endl;
+            return;
+        }
+
+        cout << "Valoración (1-5 estrellas): ";
+        cin >> valoracion;
+        cin.ignore();
+
+        if (valoracion < 1 || valoracion > 5) {
+            cout << "La valoración debe ser entre 1 y 5." << endl;
+            delete prestamo;
+            return;
+        }
     }
 
     void realizarPrestamo() {
@@ -908,10 +1029,12 @@ private:
         auto prestamos = db.obtenerTodosLosPrestamos();
         cout << "\n=== TODOS LOS PRÉSTAMOS ===" << endl;
         for (const auto& prestamo : prestamos) {
-            cout << "Usuario: " << prestamo[1] << " | Publicación: " << prestamo[2]
+            cout << "ID: " << prestamo[0] << " | Usuario: " << prestamo[1]
+                 << " | Publicación: " << prestamo[2]
                  << " | Tipo: " << (prestamo[3] == "0" ? "Tesis" : prestamo[3] == "1" ? "Libro" : "Revista")
                  << " | Préstamo: " << prestamo[4] << " | Devolución: " << prestamo[5]
-                 << " | Estado: " << prestamo[6] << endl;
+                 << " | Estado: " << prestamo[6]
+                 << " | Valoración: " << (prestamo[7] == "0" ? "Sin valorar" : prestamo[7] + "/5") << endl;
         }
     }
 
@@ -948,7 +1071,6 @@ private:
         }
         cout << "Verificación completada." << endl;
     }
-
 
     void menuRevistas() {
         // Similar a menuLibros pero para revistas
