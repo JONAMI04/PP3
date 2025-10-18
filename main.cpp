@@ -1073,8 +1073,72 @@ private:
     }
 
     void menuRevistas() {
-        // Similar a menuLibros pero para revistas
-        cout << "Gestion de Revistas (implementacion similar a libros)" << endl;
+        int opcion;
+        do {
+            cout << "\n=== GESTIÓN DE REVISTAS ===" << endl;
+            cout << "1. Agregar Revistas" << endl;
+            cout << "2. Mostrar Todos los Revistas" << endl;
+            cout << "3. Buscar Revista por Título" << endl;
+            cout << "4. Volver al Menú Principal" << endl;
+            cout << "Seleccione: ";
+            cin >> opcion;
+            cin.ignore();
+
+            switch (opcion) {
+                case 1: agregarRevista(); break;
+                case 2: mostrarRevistas(); break;
+                case 3: buscarRevista(); break;
+                case 4: break;
+                default: cout << "Opcion inválida!" << endl;
+            }
+        } while (opcion != 4);
+    }
+
+    void agregarRevista() {
+        string titulo, editorial, genero;
+        int anio, id, stock, disponibles, nro_publicacion, mes;
+
+        cout << "ID: "; cin >> id;
+        cin.ignore();
+        cout << "Título: "; getline(cin, titulo);
+        cout << "Año: "; cin >> anio;
+        cin.ignore();
+        cout << "Editorial: "; getline(cin, editorial);
+        cout << "Género: "; getline(cin, genero);
+        cout << "Nro de Publicacion: "; cin >> nro_publicacion;
+        cout << "Stock: "; cin >> stock;
+        cout << "Mes de Publicacion: "; cin >> mes;
+        cout << "Disponibles: "; cin >> disponibles;
+        Revista revista(titulo, anio, id, editorial, genero, nro_publicacion, mes, stock, disponibles);
+        if (revista.guardarEnDB()) {
+            cout << "Revista agregada exitosamente!" << endl;
+        } else {
+            cout << "Error al guardar la revista." << endl;
+        }
+    }
+
+    void mostrarRevistas() {
+        auto Revistas = db.obtenerTodasLasRevistas();
+        cout << "\n=== LISTA DE REVISTAS ===" << endl;
+        for (const auto& revista : Revistas) {
+            cout << "ID: " << revista[0] << " | Título: " << revista[1] << " | Autor: " << revista[4] << " " << revista[5]
+                 << " | Disponibles: " << revista[8] << "/" << revista[7] << endl;
+        }
+    }
+
+    void buscarRevista() {
+        string titulo;
+        cout << "Ingrese título a buscar: ";
+        getline(cin, titulo);
+
+        string sql = "SELECT * FROM revista WHERE Titulo LIKE '%" + db.escaparSQL(titulo) + "%';";
+        auto resultados = db.ejecutarConsulta(sql);
+
+        cout << "\n=== RESULTADOS DE BÚSQUEDA ===" << endl;
+        for (const auto& Revista : resultados) {
+            cout << "ID: " << Revista[0] << " | Título: " << Revista[1] << " | Autor: " << Revista[4] << " " << Revista[5]
+                 << " | Disponibles: " << Revista[8] << "/" << Revista[7] << endl;
+        }
     }
 
     void menuTesis() {
