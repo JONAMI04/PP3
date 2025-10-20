@@ -1,12 +1,123 @@
-//#include <algorithm>
-//#include <memory>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <ctime>
 #include <map>
 #include "sqlite3.h"
+#include "curl.h"
+#include <sstream>
+
+//correo biblioteca.pp3@gmail.com
+//pass   B1blioteca
+
 using namespace std;
+
+// Clase Servidor de Correo
+class EmailService {
+private:
+    string smtpServer;
+    string smtpUsername;
+    string smtpPassword;
+    int smtpPort;
+    bool debug;
+
+    static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *userp) {
+        return 0;
+    }
+    //correo biblioteca.pp3@gmail.com
+    //pass   B1blioteca
+
+public:
+    EmailService(const string& server = "smtp.gmail.com",
+                 const string& username = "biblioteca.pp3@gmail.com",
+                 const string& password = "B1blioteca",
+                 int port = 587,
+                 bool debugMode = false)
+        : smtpServer(server), smtpUsername(username), smtpPassword(password),
+          smtpPort(port), debug(debugMode) {
+        curl_global_init(CURL_GLOBAL_DEFAULT);
+    }
+
+    ~EmailService() {
+        curl_global_cleanup();
+    }
+
+    bool enviarEmail(const string& para, const string& asunto, const string& mensaje) {
+        CURL *curl;
+        CURLcode res = CURLE_OK;
+        struct curl_slist *recipients = NULL;
+
+        curl = curl_easy_init();
+        if (!curl) {
+            cerr << "Error al inicializar cURL" << endl;
+            return false;
+        }
+
+        // Configurar servidor SMTP
+        curl_easy_setopt(curl, CURLOPT_URL, ("smtp://" + smtpServer + ":" + to_string(smtpPort)).c_str());
+        curl_easy_setopt(curl, CURLOPT_MAIL_FROM, smtpUsername.c_str());
+
+        // Agregar destinatario
+        recipients = curl_slist_append(recipients, para.c_str());
+        curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
+
+        // Configurar autenticación
+        curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
+        curl_easy_setopt(curl, CURLOPT_PASSWORD, smtpPassword.c_str());
+
+        // Para servidores que requieren STARTTLS (puerto 587)
+        if (smtpPort == 587) {
+            curl_easy_setopt(curl, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
+        }
+
+        // Construir el mensaje completo del email
+        stringstream emailData;
+        emailData << "To: " << para << "\r\n"
+                  << "From: Biblioteca <" << smtpUsername << ">\r\n"
+                  << "Subject: " << asunto << "\r\n"
+                  << "Content-Type: text/plain; charset=utf-8\r\n"
+                  << "\r\n"
+                  << mensaje;
+
+        string emailStr = emailData.str();
+
+        curl_easy_setopt(curl, CURLOPT_READFUNCTION, read_callback);
+        curl_easy_setopt(curl, CURLOPT_READDATA, &emailStr);
+        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+        curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t)emailStr.size());
+
+        // Configuración adicional de seguridad
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L); // Solo para testing, en producción usar 1L
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L); // Solo para testing, en producción usar 2L
+
+        if (debug) {
+            curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        }
+
+        // Enviar el email
+        res = curl_easy_perform(curl);
+
+        // Limpiar
+        curl_slist_free_all(recipients);
+        curl_easy_cleanup(curl);
+
+        if (res != CURLE_OK) {
+            cerr << "Error al enviar email: " << curl_easy_strerror(res) << endl;
+            return false;
+        }
+
+        cout << "Email enviado exitosamente a: " << para << endl;
+        return true;
+    }
+
+    /*
+    // Metodo para configurar credenciales después de la construcción
+    void configurarCredenciales(const string& username, const string& password) {
+        smtpUsername = username;
+        smtpPassword = password;
+    }*/
+};
+
 
 // Clase para manejar la base de datos
 class DatabaseManager {
@@ -33,7 +144,7 @@ public:
 
     bool actualizarValoracionPrestamo(int idPrestamo, int valoracion) {
         string sql = "UPDATE prestamos SET Valoracion = " + to_string(valoracion) +
-                    "', Estado = 'Devuelto' WHERE ID_Prestamo = " +
+                    ", Estado = 'Devuelto' WHERE ID_Prestamo = " +
                     to_string(idPrestamo) + ";";
         return ejecutarSQL(sql);
     }
@@ -498,7 +609,7 @@ public:
 
         // Actualizar en la base de datos
         string sql = "UPDATE prestamos SET Valoracion = " + to_string(valoracion) +
-                    "', Estado = 'Devuelto' WHERE ID_Prestamo = " +
+                    ", Estado = 'Devuelto' WHERE ID_Prestamo = " +
                     to_string(idPrestamo) + ";";
         return db.ejecutarSQL(sql);
     }
@@ -555,12 +666,20 @@ private:
     string Telefono;
     string Mail;
     static DatabaseManager db;
+    static EmailService emailService;
 
 public:
     Usuario(int id, const string& nombre, const string& apellido, const string& dni,
             const string& direccion, const string& telefono, const string& mail)
         : ID_Usuario(id), Nombre_Usuario(nombre), Apellido_Usuario(apellido),
           DNI_Usuario(dni), Direccion(direccion), Telefono(telefono), Mail(mail) {}
+
+    // Metodo estático para configurar el servicio de email
+    static void configurarEmailService(const string& username, const string& password,
+                                     const string& server = "smtp.gmail.com",
+                                     int port = 587) {
+        emailService = EmailService(server, username, password, port, true); // debug=true para desarrollo
+    }
 
     // Guardar usuario en la base de datos
     bool guardarEnDB() {
@@ -586,7 +705,29 @@ public:
 
         // Crear y guardar préstamo
         Prestamo prestamo(ID_Usuario, idPublicacion, tipoPublicacion, fechaPrestamo, fechaDevolucion);
-        return prestamo.guardarEnDB();
+        if (prestamo.guardarEnDB()) {
+            // Obtener título de la publicación para la notificación
+            string titulo = "Publicación ID: " + to_string(idPublicacion);
+            string sql;
+
+            if (tipoPublicacion == 1)
+                sql = "SELECT Titulo FROM libros WHERE ID_Libro = " + to_string(idPublicacion);
+            else if (tipoPublicacion == 2)
+                sql = "SELECT Titulo FROM revista WHERE ID_Revista = " + to_string(idPublicacion);
+            else if (tipoPublicacion == 0)
+                sql = "SELECT Titulo FROM tesis WHERE ID_Tesis = " + to_string(idPublicacion);
+
+            auto resultado = db.ejecutarConsulta(sql);
+            if (!resultado.empty()) {
+                titulo = resultado[0][0];
+            }
+
+            string recomendacion = generarRecomendacion();
+            enviarNotificacion(titulo, 15, recomendacion, false); // false = no es recordatorio
+
+            return true;
+        }
+        return false;
     }
 
     // Calcular días restantes de préstamo
@@ -607,47 +748,77 @@ public:
     }
 
     // Enviar notificación por email
-    void enviarNotificacion(const string& tituloPublicacion, int diasRestantes, const string& recomendacion) {
-        cout << "\n=== NOTIFICACIÓN POR EMAIL ===" << endl;
-        cout << "Para: " << Mail << endl;
-        cout << "Asunto: Recordatorio de préstamo - " << tituloPublicacion << endl;
-        cout << "Hola " << Nombre_Usuario << " " << Apellido_Usuario << "," << endl;
-        cout << "Te recordamos que el préstamo de '" << tituloPublicacion << "'" << endl;
-        cout << "tiene " << diasRestantes << " días restantes para su devolución." << endl;
-
-        if (!recomendacion.empty()) {
-            cout << "Recomendación: " << recomendacion << endl;
+    void enviarNotificacion(const string& tituloPublicacion, int diasRestantes,
+                           const string& recomendacion, bool esRecordatorio = true) {
+        string asunto, mensaje;
+        if (esRecordatorio) {
+            asunto = "Recordatorio de préstamo - " + tituloPublicacion;
+            mensaje = "Hola " + Nombre_Usuario + " " + Apellido_Usuario + ",\n\n"
+                     "Te recordamos que el préstamo de '" + tituloPublicacion + "'\n"
+                     "tiene " + to_string(diasRestantes) + " días restantes para su devolución.\n\n";
+        } else {
+            asunto = "Confirmación de nuevo préstamo - " + tituloPublicacion;
+            mensaje = "Hola " + Nombre_Usuario + " " + Apellido_Usuario + ",\n\n"
+                     "Confirmamos tu préstamo de '" + tituloPublicacion + "'\n"
+                     "Fecha de devolución: en " + to_string(diasRestantes) + " días.\n\n";
         }
+        if (!recomendacion.empty()) {
+            mensaje += recomendacion + "\n\n";
+        }
+        mensaje += "Saludos cordiales,\nBiblioteca";
 
-        cout << "Saludos cordiales,\nBiblioteca" << endl;
-        cout << "==============================\n" << endl;
+        // Enviar email real
+        bool exito = emailService.enviarEmail(Mail, asunto, mensaje);
+
+        if (exito) {
+            cout << "Notificación enviada por email a: " << Mail << endl;
+        } else {
+            cout << "Error al enviar email a: " << Mail << " (mostrando en consola)" << endl;
+            // Fallback: mostrar en consola
+            cout << "\n=== NOTIFICACIÓN (FALLBACK) ===" << endl;
+            cout << "Para: " << Mail << endl;
+            cout << "Asunto: " << asunto << endl;
+            cout << "Mensaje: " << mensaje << endl;
+            cout << "==============================\n" << endl;
+        }
     }
 
     // Generar recomendación basada en historial
     string generarRecomendacion() {
         auto historial = Prestamo::obtenerHistorialUsuario(ID_Usuario);
         map<string, int> generosFrecuentes;
+        map<string, int> autoresFrecuentes;
 
-        // Analizar géneros de préstamos anteriores
+        // Analizar géneros y autores de préstamos anteriores con valoraciones altas
         for (const auto& prestamo : historial) {
-            int tipo = stoi(prestamo[3]); // Tipo_Publicacion
-            int idPub = stoi(prestamo[2]); // ID_Publicacion
+            int tipo = stoi(prestamo[3]);
+            int idPub = stoi(prestamo[2]);
+            int valoracion = stoi(prestamo[7]); // Nueva columna de valoración
 
-            // Consultar el género según el tipo
-            string sql;
-            if (tipo == 1) { // Libro
-                sql = "SELECT Genero FROM libros WHERE ID_Libro = " + to_string(idPub);
-            } else if (tipo == 2) { // Revista
-                sql = "SELECT Genero FROM revista WHERE ID_Revista = " + to_string(idPub);
-            }
+            // Solo considerar préstamos con buena valoración (4-5 estrellas)
+            if (valoracion >= 4) {
+                string sql;
+                if (tipo == 1) { // Libro
+                    sql = "SELECT Genero, Nombre_Autor, Apellido_Autor FROM libros WHERE ID_Libro = " + to_string(idPub);
+                } else if (tipo == 2) { // Revista
+                    sql = "SELECT Genero FROM revista WHERE ID_Revista = " + to_string(idPub);
+                }
 
-            auto resultado = db.ejecutarConsulta(sql);
-            if (!resultado.empty() && !resultado[0][0].empty()) {
-                generosFrecuentes[resultado[0][0]]++;
+                auto resultado = db.ejecutarConsulta(sql);
+                if (!resultado.empty() && !resultado[0][0].empty()) {
+                    string genero = resultado[0][0];
+                    generosFrecuentes[genero]++;
+
+                    // Para libros, también considerar autores
+                    if (tipo == 1 && resultado.size() > 2) {
+                    string autor = resultado[0][1] + " " + resultado[0][2];
+                        autoresFrecuentes[autor]++;
+                    }
+                }
             }
         }
 
-        // Encontrar género más frecuente
+        // Buscar recomendación basada en género favorito
         if (!generosFrecuentes.empty()) {
             string generoFavorito;
             int maxFrecuencia = 0;
@@ -658,14 +829,32 @@ public:
                 }
             }
 
-            // Buscar recomendación del mismo género
-            string sql = "SELECT Titulo FROM libros WHERE Genero = '" + generoFavorito +
-                        "' AND Cantidad_Disponible > 0 LIMIT 1";
+            // Buscar libro del mismo género que no haya sido prestado antes
+            string sql = "SELECT l.Titulo, l.Nombre_Autor, l.Apellido_Autor "
+                        "FROM libros l "
+                        "WHERE l.Genero = '" + generoFavorito + "' "
+                        "AND l.Cantidad_Disponible > 0 "
+                        "AND l.ID_Libro NOT IN ("
+                        "SELECT p.ID_Publicacion FROM prestamos p "
+                        "WHERE p.ID_Usuario = " + to_string(ID_Usuario) + " AND p.Tipo_Publicacion = 1"
+                        ") LIMIT 1";
+
             auto recomendacion = db.ejecutarConsulta(sql);
             if (!recomendacion.empty()) {
-                return "Basado en tus intereses en " + generoFavorito +
-                       ", te recomendamos: " + recomendacion[0][0];
+                return "Basado en tu interés en " + generoFavorito +
+                       ", te recomendamos: '" + recomendacion[0][0] +
+                       "' de " + recomendacion[0][1] + " " + recomendacion[0][2];
             }
+        }
+
+        // Si no hay historial con valoraciones, recomendar novedades
+        string sql = "SELECT Titulo, Nombre_Autor, Apellido_Autor FROM libros "
+                    "WHERE Cantidad_Disponible > 0 "
+                    "ORDER BY Anio DESC LIMIT 1";
+        auto novedad = db.ejecutarConsulta(sql);
+        if (!novedad.empty()) {
+            return "Te recomendamos nuestra novedad: '" + novedad[0][0] +
+                   "' de " + novedad[0][1] + " " + novedad[0][2];
         }
 
         return "Te recomendamos explorar nuestras novedades literarias.";
@@ -739,6 +928,7 @@ public:
 };
 
 DatabaseManager Usuario::db;
+EmailService Usuario::emailService;
 
 // Menus de Biblioteca adaptar
 class SistemaBiblioteca {
@@ -1142,8 +1332,72 @@ private:
     }
 
     void menuTesis() {
-        // Similar a menuLibros pero para tesis
-        cout << "Gestion de Tesis (implementacion similar a libros)" << endl;
+        int opcion;
+        do {
+            cout << "\n=== GESTIÓN DE TESIS ===" << endl;
+            cout << "1. Agregar Tesis" << endl;
+            cout << "2. Mostrar Todas las Tesis" << endl;
+            cout << "3. Buscar Tesis por Título" << endl;
+            cout << "4. Volver al Menú Principal" << endl;
+            cout << "Seleccione: ";
+            cin >> opcion;
+            cin.ignore();
+
+            switch (opcion) {
+                case 1: agregarTesis(); break;
+                case 2: mostrarTesis(); break;
+                case 3: buscarTesis(); break;
+                case 4: break;
+                default: cout << "Opcion inválida!" << endl;
+            }
+        } while (opcion != 4);
+    }
+
+    void agregarTesis() {
+        string titulo, universidad, carrera, nom_autor, ape_autor ;
+        int anio, id, stock, disponibles;
+
+        cout << "ID: "; cin >> id;
+        cin.ignore();
+        cout << "Título: "; getline(cin, titulo);
+        cout << "Año: "; cin >> anio;
+        cin.ignore();
+        cout << "Universidad: "; getline(cin, universidad);
+        cout << "Carrera: "; getline(cin, carrera);
+        cout << "Nombre del Autor: "; getline(cin, nom_autor);
+        cout << "Apellido del Autor: "; getline(cin, ape_autor);
+        cout << "Stock: "; cin >> stock;
+        cout << "Disponibles: "; cin >> disponibles;
+        Tesis tesis(titulo, anio, id, universidad, carrera, nom_autor, ape_autor, stock, disponibles);
+        if (tesis.guardarEnDB()) {
+            cout << "Tesis agregada exitosamente!" << endl;
+        } else {
+            cout << "Error al guardar la Tesis." << endl;
+        }
+    }
+
+    void mostrarTesis() {
+        auto Tesis = db.obtenerTodasLasTesis();
+        cout << "\n=== LISTA DE TESIS ===" << endl;
+        for (const auto& tesis : Tesis) {
+            cout << "ID: " << tesis[0] << " | Título: " << tesis[1] << " | Autor: " << tesis[4] << " " << tesis[5]
+                 << " | Disponibles: " << tesis[8] << "/" << tesis[7] << endl;
+        }
+    }
+
+    void buscarTesis() {
+        string titulo;
+        cout << "Ingrese título a buscar: ";
+        getline(cin, titulo);
+
+        string sql = "SELECT * FROM tesis WHERE Titulo LIKE '%" + db.escaparSQL(titulo) + "%';";
+        auto resultados = db.ejecutarConsulta(sql);
+
+        cout << "\n=== RESULTADOS DE BÚSQUEDA ===" << endl;
+        for (const auto& Tesis : resultados) {
+            cout << "ID: " << Tesis[0] << " | Título: " << Tesis[1] << " | Autor: " << Tesis[4] << " " << Tesis[5]
+                 << " | Disponibles: " << Tesis[8] << "/" << Tesis[7] << endl;
+        }
     }
 
     void mostrarTodo() {
