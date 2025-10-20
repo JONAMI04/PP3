@@ -192,7 +192,7 @@ public:
         return true;
     }
 
-    // Méto do para Ejecutar Consultas con Retorno de Datos
+    // Metodo para Ejecutar Consultas con Retorno de Datos
     vector<vector<string>> ejecutarConsulta(const string& sql) {
         vector<vector<string>> resultados;
         sqlite3_stmt* stmt;
@@ -291,7 +291,7 @@ public:
         cout << "Tablas verificadas/creadas correctamente." << endl;
     }
 
-    // Métodos para Insertar Datos
+    // Metodos para Insertar Datos
     bool insertarLibro(int id, const string& titulo, const string& anio, const string& editorial,
                       const string& nombre_autor, const string& apellido_autor, const string& genero,
                       int cantidad_total, int cantidad_disponible) {
@@ -344,7 +344,7 @@ public:
         return ejecutarSQL(sql);
     }
 
-    // Métodos para Consultar Datos
+    // Metodos para Consultar Datos
     vector<vector<string>> obtenerTodosLosLibros() {
         return ejecutarConsulta("SELECT * FROM libros;");
     }
