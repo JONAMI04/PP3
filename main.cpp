@@ -22,6 +22,15 @@ private:
     bool debug;
 
     static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *userp) {
+        string *upload = (string*)userp;
+        size_t buffer_size = size * nmemb;
+
+        if(upload->size()) {
+            size_t copy_size = min(upload->size(), buffer_size);
+            memcpy(ptr, upload->c_str(), copy_size);
+            upload->erase(0, copy_size);
+            return copy_size;
+        }
         return 0;
     }
     //correo biblioteca.pp3@gmail.com
@@ -597,7 +606,7 @@ public:
         return db.obtenerPrestamosUsuario(idUsuario);
     }
 
-    // Método para agregar valoración cuando se devuelve el préstamo
+    // Metodo para agregar valoración cuando se devuelve el préstamo
     bool agregarValoracion(int val, const string& com = "") {
         if (val < 0 || val > 5) {
             cerr << "Error: La valoración debe estar entre 0 y 5" << endl;
@@ -835,9 +844,8 @@ public:
                         "WHERE l.Genero = '" + generoFavorito + "' "
                         "AND l.Cantidad_Disponible > 0 "
                         "AND l.ID_Libro NOT IN ("
-                        "SELECT p.ID_Publicacion FROM prestamos p "
-                        "WHERE p.ID_Usuario = " + to_string(ID_Usuario) + " AND p.Tipo_Publicacion = 1"
-                        ") LIMIT 1";
+                        "SELECT p.ID_Publicacion FROM prestamos p WHERE p.ID_Usuario = " + to_string(ID_Usuario) + " AND p.Tipo_Publicacion = 1"
+                        ") LIMIT 1;";
 
             auto recomendacion = db.ejecutarConsulta(sql);
             if (!recomendacion.empty()) {
@@ -917,7 +925,7 @@ public:
     string getApellido() const { return Apellido_Usuario; }
     string getMail() const { return Mail; }
 
-    // Método estático para obtener usuario por ID
+    // Metodo estático para obtener usuario por ID
     static Usuario* obtenerPorId(int id) {
         auto resultados = db.ejecutarConsulta("SELECT * FROM usuarios WHERE ID_Usuario = " + to_string(id));
         if (resultados.empty()) return nullptr;
@@ -1178,6 +1186,13 @@ private:
             delete prestamo;
             return;
         }
+        if (prestamo->agregarValoracion(valoracion)) {
+            cout << "Valoración registrada exitosamente!" << endl;
+        } else {
+            cout << "Error al registrar la valoración." << endl;
+        }
+
+        delete prestamo;
     }
 
     void realizarPrestamo() {
@@ -1311,7 +1326,7 @@ private:
         auto Revistas = db.obtenerTodasLasRevistas();
         cout << "\n=== LISTA DE REVISTAS ===" << endl;
         for (const auto& revista : Revistas) {
-            cout << "ID: " << revista[0] << " | Título: " << revista[1] << " | Autor: " << revista[4] << " " << revista[5]
+            cout << "ID: " << revista[0] << " | Título: " << revista[1] << " | Editorial: " << revista[5] << " Nro " << revista[4]
                  << " | Disponibles: " << revista[8] << "/" << revista[7] << endl;
         }
     }
@@ -1326,11 +1341,10 @@ private:
 
         cout << "\n=== RESULTADOS DE BÚSQUEDA ===" << endl;
         for (const auto& Revista : resultados) {
-            cout << "ID: " << Revista[0] << " | Título: " << Revista[1] << " | Autor: " << Revista[4] << " " << Revista[5]
+            cout << "ID: " << Revista[0] << " | Título: " << Revista[1] << " | Editorial: " << Revista[5] << " Nro " << Revista[4]
                  << " | Disponibles: " << Revista[8] << "/" << Revista[7] << endl;
         }
     }
-
     void menuTesis() {
         int opcion;
         do {
@@ -1440,6 +1454,7 @@ private:
 };
 
 int main() {
+    Usuario::configurarEmailService("biblioteca.pp3@gmail.com", "B1blioteca");
     cout << "Iniciando Sistema de Biblioteca..." << endl;
     cout << "Conectando a la base de datos..." << endl;
     //integrar el menu de mati
