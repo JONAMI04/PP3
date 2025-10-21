@@ -5,14 +5,14 @@
 #include <map>
 #include "sqlite3.h"
 #include <sstream>
+#include <cstdlib>
+#include <algorithm>
 
 using namespace std;
 
 //correo biblioteca.pp3@gmail.com
 //pass   B1blioteca
-
-
-// Clase Servidor de Correo
+//clave de aplicacion xyqb itoy xjba umfv
 
 // Clase para manejar la base de datos
 class DatabaseManager {
@@ -336,6 +336,15 @@ int Publicaciones::Total_Publicaciones = 0;
 static void mostrarPublicaciones() {
     Publicaciones::total_publicaciones();
 }
+static string escapeArg(const string& s) {
+    string out;
+    out.reserve(s.size());
+    for (char c : s) {
+        if (c == '"') out += '\\', out += '"';
+        else out += c;
+    }
+    return out;
+}
 DatabaseManager Publicaciones::db;
 
 // Clase Libro
@@ -644,8 +653,45 @@ public:
 
     // Enviar notificación por email
     void enviarNotificacion(const string& tituloPublicacion, int diasRestantes,
-                           const string& recomendacion, bool esRecordatorio = true) {
-        return ; // Implementar envío de correo electrónico aquí:
+                               const string& recomendacion, bool esRecordatorio) {
+        const char* env_user = getenv("EMAIL_USER");
+        const char* env_pass = getenv("EMAIL_PASS");
+        if (!env_user || !env_pass) {
+            cerr << "Email: configure EMAIL_USER y EMAIL_PASS en variables de entorno\n";
+            return;
+        }
+
+        ostringstream asunto;
+        asunto << (esRecordatorio ? "Recordatorio de devolución: " : "Notificación: ") << tituloPublicacion;
+
+        ostringstream cuerpo;
+        cuerpo << "Hola " << Nombre_Usuario << ",\r\n\r\n";
+        if (esRecordatorio) {
+            cuerpo << "Tu préstamo de \"" << tituloPublicacion << "\" vence en " << diasRestantes << " día(s).\r\n";
+        } else {
+            cuerpo << "Has realizado un préstamo de \"" << tituloPublicacion << "\".\r\n";
+        }
+        cuerpo << "\r\nRecomendación: " << recomendacion << "\r\n\r\n";
+        cuerpo << "Saludos,\r\nBiblioteca";
+
+        // Construir comando para llamar al script Python
+        string script = "enviar_mail.py";
+        string nameArg = escapeArg(Nombre_Usuario);
+        string mailArg = escapeArg(Mail);
+        string subjArg = escapeArg(asunto.str());
+        string bodyArg = escapeArg(cuerpo.str());
+
+        ostringstream cmd;
+        cmd << "python \"" << script << "\" "
+            << "\"" << nameArg << "\" "
+            << "\"" << mailArg << "\" "
+            << "\"" << subjArg << "\" "
+            << "\"" << bodyArg << "\"";
+
+        int res = std::system(cmd.str().c_str());
+        if (res != 0) {
+            std::cerr << "Error ejecutando script de envío (codigo " << res << ")\n";
+        }
     }
 
     // Generar recomendación basada en historial
@@ -749,7 +795,7 @@ public:
                     }
 
                     string recomendacion = generarRecomendacion();
-                    enviarNotificacion(titulo, diasRestantes, recomendacion);
+                    enviarNotificacion(titulo, diasRestantes, recomendacion, true); // true = es recordatorio
                 }
             }
         }
