@@ -59,8 +59,8 @@
 #define CURL_IGNORE_DEPRECATION(statements)     statements
 #endif
 
-#include "curl/curlver.h"
-#include "curl/system.h"
+#include "curlver.h"
+#include "system.h"
 
 #include <stdio.h>
 #include <limits.h>
@@ -3317,13 +3317,13 @@ CURL_EXTERN CURLcode curl_easy_ssls_export(CURL *handle,
 
 /* unfortunately, the easy.h and multi.h include files need options and info
   stuff before they can be included! */
-#include "curl/easy.h"
-#include "curl/multi.h"
-#include "curl/urlapi.h"
-#include "curl/options.h"
-#include "curl/header.h"
-#include "curl/websockets.h"
-#include "curl/mprintf.h"
+#include "easy.h"
+#include "multi.h"
+#include "urlapi.h"
+#include "options.h"
+#include "header.h"
+#include "websockets.h"
+#include "mprintf.h"
 
 /* the typechecker does not work in C++ (yet) */
 #if ((defined(__GNUC__) && defined(__GNUC_MINOR__) && \

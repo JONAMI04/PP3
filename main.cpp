@@ -4,7 +4,7 @@
 #include <ctime>
 #include <map>
 #include "sqlite3.h"
-#include "curl.h"
+#include "curl/curl.h"
 #include <sstream>
 
 //correo biblioteca.pp3@gmail.com
