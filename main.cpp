@@ -4,129 +4,15 @@
 #include <ctime>
 #include <map>
 #include "sqlite3.h"
-#include "curl/curl.h"
 #include <sstream>
+
+using namespace std;
 
 //correo biblioteca.pp3@gmail.com
 //pass   B1blioteca
 
-using namespace std;
 
 // Clase Servidor de Correo
-class EmailService {
-private:
-    string smtpServer;
-    string smtpUsername;
-    string smtpPassword;
-    int smtpPort;
-    bool debug;
-
-    static size_t read_callback(void *ptr, size_t size, size_t nmemb, void *userp) {
-        string *upload = (string*)userp;
-        size_t buffer_size = size * nmemb;
-
-        if(upload->size()) {
-            size_t copy_size = min(upload->size(), buffer_size);
-            memcpy(ptr, upload->c_str(), copy_size);
-            upload->erase(0, copy_size);
-            return copy_size;
-        }
-        return 0;
-    }
-    //correo biblioteca.pp3@gmail.com
-    //pass   B1blioteca
-
-public:
-    EmailService(const string& server = "smtp.gmail.com",
-                 const string& username = "biblioteca.pp3@gmail.com",
-                 const string& password = "B1blioteca",
-                 int port = 587,
-                 bool debugMode = false)
-        : smtpServer(server), smtpUsername(username), smtpPassword(password),
-          smtpPort(port), debug(debugMode) {
-        curl_global_init(CURL_GLOBAL_DEFAULT);
-    }
-
-    ~EmailService() {
-        curl_global_cleanup();
-    }
-
-    bool enviarEmail(const string& para, const string& asunto, const string& mensaje) {
-        CURL *curl;
-        CURLcode res = CURLE_OK;
-        struct curl_slist *recipients = NULL;
-
-        curl = curl_easy_init();
-        if (!curl) {
-            cerr << "Error al inicializar cURL" << endl;
-            return false;
-        }
-
-        // Configurar servidor SMTP
-        curl_easy_setopt(curl, CURLOPT_URL, ("smtp://" + smtpServer + ":" + to_string(smtpPort)).c_str());
-        curl_easy_setopt(curl, CURLOPT_MAIL_FROM, smtpUsername.c_str());
-
-        // Agregar destinatario
-        recipients = curl_slist_append(recipients, para.c_str());
-        curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
-
-        // Configurar autenticación
-        curl_easy_setopt(curl, CURLOPT_USERNAME, smtpUsername.c_str());
-        curl_easy_setopt(curl, CURLOPT_PASSWORD, smtpPassword.c_str());
-
-        // Para servidores que requieren STARTTLS (puerto 587)
-        if (smtpPort == 587) {
-            curl_easy_setopt(curl, CURLOPT_USE_SSL, (long)CURLUSESSL_ALL);
-        }
-
-        // Construir el mensaje completo del email
-        stringstream emailData;
-        emailData << "To: " << para << "\r\n"
-                  << "From: Biblioteca <" << smtpUsername << ">\r\n"
-                  << "Subject: " << asunto << "\r\n"
-                  << "Content-Type: text/plain; charset=utf-8\r\n"
-                  << "\r\n"
-                  << mensaje;
-
-        string emailStr = emailData.str();
-
-        curl_easy_setopt(curl, CURLOPT_READFUNCTION, read_callback);
-        curl_easy_setopt(curl, CURLOPT_READDATA, &emailStr);
-        curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-        curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, (curl_off_t)emailStr.size());
-
-        // Configuración adicional de seguridad
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L); // Solo para testing, en producción usar 1L
-        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L); // Solo para testing, en producción usar 2L
-
-        if (debug) {
-            curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-        }
-
-        // Enviar el email
-        res = curl_easy_perform(curl);
-
-        // Limpiar
-        curl_slist_free_all(recipients);
-        curl_easy_cleanup(curl);
-
-        if (res != CURLE_OK) {
-            cerr << "Error al enviar email: " << curl_easy_strerror(res) << endl;
-            return false;
-        }
-
-        cout << "Email enviado exitosamente a: " << para << endl;
-        return true;
-    }
-
-    /*
-    // Metodo para configurar credenciales después de la construcción
-    void configurarCredenciales(const string& username, const string& password) {
-        smtpUsername = username;
-        smtpPassword = password;
-    }*/
-};
-
 
 // Clase para manejar la base de datos
 class DatabaseManager {
@@ -376,14 +262,22 @@ public:
     }
 
     bool actualizarDisponibilidad(int tipo, int id, int nueva_cantidad) {
-        string tabla;
-        if (tipo == 0) tabla = "tesis";
-        else if (tipo == 1) tabla = "libros";
-        else if (tipo == 2) tabla = "revista";
-        else return false;
-
-        string sql = "UPDATE " + tabla + " SET Cantidad_Disponible = " + to_string(nueva_cantidad) +
-                    " WHERE ID_" + (tipo == 0 ? "Tesis" : (tipo == 1 ? "Libro" : "Revista")) + " = " + to_string(id) + ";";
+        string tabla, sql;
+        if (tipo == 0) {
+            tabla = "tesis";
+            string sql = "UPDATE tesis SET Cantidad_Disponible = " + to_string(nueva_cantidad) +
+                  " WHERE ID_Tesis = " + to_string(id) + ";";
+        } else if (tipo == 1) {
+            tabla = "libros";
+            string sql = "UPDATE libros SET Cantidad_Disponible = " + to_string(nueva_cantidad) +
+                  " WHERE ID_Libro = " + to_string(id) + ";";
+        } else if (tipo == 2) {
+            tabla = "revista";
+            string sql = "UPDATE revista SET Cantidad_Disponible = " + to_string(nueva_cantidad) +
+                  " WHERE ID_Revista = " + to_string(id) + ";";
+        } else {
+            return false;
+        }
         return ejecutarSQL(sql);
     }
 
@@ -675,20 +569,12 @@ private:
     string Telefono;
     string Mail;
     static DatabaseManager db;
-    static EmailService emailService;
 
 public:
     Usuario(int id, const string& nombre, const string& apellido, const string& dni,
             const string& direccion, const string& telefono, const string& mail)
         : ID_Usuario(id), Nombre_Usuario(nombre), Apellido_Usuario(apellido),
           DNI_Usuario(dni), Direccion(direccion), Telefono(telefono), Mail(mail) {}
-
-    // Metodo estático para configurar el servicio de email
-    static void configurarEmailService(const string& username, const string& password,
-                                     const string& server = "smtp.gmail.com",
-                                     int port = 587) {
-        emailService = EmailService(server, username, password, port, true); // debug=true para desarrollo
-    }
 
     // Guardar usuario en la base de datos
     bool guardarEnDB() {
@@ -759,37 +645,7 @@ public:
     // Enviar notificación por email
     void enviarNotificacion(const string& tituloPublicacion, int diasRestantes,
                            const string& recomendacion, bool esRecordatorio = true) {
-        string asunto, mensaje;
-        if (esRecordatorio) {
-            asunto = "Recordatorio de préstamo - " + tituloPublicacion;
-            mensaje = "Hola " + Nombre_Usuario + " " + Apellido_Usuario + ",\n\n"
-                     "Te recordamos que el préstamo de '" + tituloPublicacion + "'\n"
-                     "tiene " + to_string(diasRestantes) + " días restantes para su devolución.\n\n";
-        } else {
-            asunto = "Confirmación de nuevo préstamo - " + tituloPublicacion;
-            mensaje = "Hola " + Nombre_Usuario + " " + Apellido_Usuario + ",\n\n"
-                     "Confirmamos tu préstamo de '" + tituloPublicacion + "'\n"
-                     "Fecha de devolución: en " + to_string(diasRestantes) + " días.\n\n";
-        }
-        if (!recomendacion.empty()) {
-            mensaje += recomendacion + "\n\n";
-        }
-        mensaje += "Saludos cordiales,\nBiblioteca";
-
-        // Enviar email real
-        bool exito = emailService.enviarEmail(Mail, asunto, mensaje);
-
-        if (exito) {
-            cout << "Notificación enviada por email a: " << Mail << endl;
-        } else {
-            cout << "Error al enviar email a: " << Mail << " (mostrando en consola)" << endl;
-            // Fallback: mostrar en consola
-            cout << "\n=== NOTIFICACIÓN (FALLBACK) ===" << endl;
-            cout << "Para: " << Mail << endl;
-            cout << "Asunto: " << asunto << endl;
-            cout << "Mensaje: " << mensaje << endl;
-            cout << "==============================\n" << endl;
-        }
+        return ; // Implementar envío de correo electrónico aquí:
     }
 
     // Generar recomendación basada en historial
@@ -936,7 +792,6 @@ public:
 };
 
 DatabaseManager Usuario::db;
-EmailService Usuario::emailService;
 
 // Menus de Biblioteca adaptar
 class SistemaBiblioteca {
@@ -1454,7 +1309,6 @@ private:
 };
 
 int main() {
-    Usuario::configurarEmailService("biblioteca.pp3@gmail.com", "B1blioteca");
     cout << "Iniciando Sistema de Biblioteca..." << endl;
     cout << "Conectando a la base de datos..." << endl;
     //integrar el menu de mati
