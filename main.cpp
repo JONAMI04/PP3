@@ -21,8 +21,7 @@ private:
     string dbPath;
 
 public:
-    //ubicacion de la base de datos "C:\\Users\\nahue\\Downloads\\biblioteca.db"
-    DatabaseManager(const string& path = "C:\\Users\\nahue\\Downloads\\biblioteca.db") : db(nullptr), dbPath(path) {
+    DatabaseManager(const string& path = "biblioteca.db") : db(nullptr), dbPath(path) {
         if (abrirDB(dbPath)) {
             cout << "Base de datos abierta exitosamente: " << dbPath << endl;
             crearTablasSiNoExisten();
