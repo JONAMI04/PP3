@@ -6,4 +6,5 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(PP3 main.cpp
                sqlite3.c
         cmake-build-debug/biblioteca.db
+        cmake-build-debug/enviar_mail.py
 )

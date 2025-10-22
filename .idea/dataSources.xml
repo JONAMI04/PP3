@@ -1,18 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="biblioteca.db" uuid="70124cb8-fdd5-4317-8946-9bbba74e98a4">
+    <data-source source="LOCAL" name="biblioteca" uuid="9d9dff2d-7692-45e5-8230-2bc05d3bf466">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$USER_HOME$/Downloads/biblioteca.db</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="biblioteca" uuid="082931ae-09ae-48fc-b056-2da4ccf8dac3">
-      <driver-ref>sqlite.xerial</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
-      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/biblioteca.db</jdbc-url>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/cmake-build-debug/biblioteca.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
       <libraries>
         <library>

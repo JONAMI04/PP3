@@ -365,10 +365,10 @@ public:
     void mostrar() override {
         cout << "=== LIBRO ===" << endl;
         cout << "ID: " << Id << endl;
-        cout << "Título: " << Titulo << endl;
+        cout << "Titulo: " << Titulo << endl;
         cout << "Autor: " << AutorNom << " " << AutorApe << endl;
         cout << "Editorial: " << Editorial << endl;
-        cout << "Género: " << Genero << endl;
+        cout << "Genero: " << Genero << endl;
         cout << "Año: " << Anio << endl;
         cout << "Stock: " << stock << endl;
         cout << "Disponibles: " << disponibles << endl;
@@ -405,9 +405,9 @@ public:
     void mostrar() override {
         cout << "=== REVISTA ===" << endl;
         cout << "ID: " << Id << endl;
-        cout << "Título: " << Titulo << endl;
+        cout << "Titulo: " << Titulo << endl;
         cout << "Editorial: " << Editorial << endl;
-        cout << "Género: " << Genero << endl;
+        cout << "Genero: " << Genero << endl;
         cout << "Número: " << Numero << endl;
         cout << "Mes: " << Mes << endl;
         cout << "Año: " << Anio << endl;
@@ -446,7 +446,7 @@ public:
     void mostrar() override {
         cout << "=== TESIS ===" << endl;
         cout << "ID: " << Id << endl;
-        cout << "Título: " << Titulo << endl;
+        cout << "Titulo: " << Titulo << endl;
         cout << "Autor: " << AutorNom << " " << AutorApe << endl;
         cout << "Universidad: " << Universidad << endl;
         cout << "Carrera: " << Carrera << endl;
@@ -508,21 +508,48 @@ public:
         return db.obtenerPrestamosUsuario(idUsuario);
     }
 
-    // Metodo para agregar valoración cuando se devuelve el préstamo
+    // Metodo para agregar valoracion cuando se devuelve el prestamo
     bool agregarValoracion(int val, const string& com = "") {
         if (val < 0 || val > 5) {
-            cerr << "Error: La valoración debe estar entre 0 y 5" << endl;
+            cerr << "Error: La valoracion debe estar entre 0 y 5" << endl;
             return false;
         }
 
         valoracion = val;
         estado = "Devuelto";
 
-        // Actualizar en la base de datos
+        // Actualizar en la base de datos el prestamo
         string sql = "UPDATE prestamos SET Valoracion = " + to_string(valoracion) +
-                    ", Estado = 'Devuelto' WHERE ID_Prestamo = " +
-                    to_string(idPrestamo) + ";";
-        return db.ejecutarSQL(sql);
+                     ", Estado = 'Devuelto' WHERE ID_Prestamo = " + to_string(idPrestamo) + ";";
+        if (!db.ejecutarSQL(sql)) {
+            cerr << "Error al actualizar estado/valoracion del prestamo en DB." << endl;
+            return false;
+        }
+        // Incrementar disponibilidad de la publicación asociada
+        string consulta;
+        if (tipoPublicacion == 1)
+            consulta = "SELECT Cantidad_Disponible FROM libros WHERE ID_Libro = " + to_string(idPublicacion);
+        else if (tipoPublicacion == 2)
+            consulta = "SELECT Cantidad_Disponible FROM revista WHERE ID_Revista = " + to_string(idPublicacion);
+        else if (tipoPublicacion == 0)
+            consulta = "SELECT Cantidad_Disponible FROM tesis WHERE ID_Tesis = " + to_string(idPublicacion);
+
+        auto resultado = db.ejecutarConsulta(consulta);
+        if (!resultado.empty() && !resultado[0][0].empty()) {
+            int disponibles = 0;
+            try {
+                disponibles = stoi(resultado[0][0]);
+            } catch (...) {
+                cerr << "Error al parsear Cantidad_Disponible." << endl;
+                return true;
+            }
+            if (!db.actualizarDisponibilidad(tipoPublicacion, idPublicacion, disponibles + 1)) {
+                cerr << "Advertencia: No se pudo actualizar la disponibilidad en la DB." << endl;
+            }
+        } else {
+            cerr << "Advertencia: No se encontró la publicación para actualizar disponibilidad." << endl;
+        }
+        return true;
     }
 
     // Getters
@@ -557,7 +584,7 @@ public:
             stoi(prestamoData[7])  // Valoracion
         );
 
-        // Establecer el ID del préstamo
+        // Establecer el ID del prestamo
         prestamo->idPrestamo = stoi(prestamoData[0]);
 
         return prestamo;
@@ -589,7 +616,7 @@ public:
         return db.insertarUsuario(ID_Usuario, Nombre_Usuario, Apellido_Usuario, DNI_Usuario, Direccion, Telefono, Mail);
     }
 
-    // Realizar préstamo
+    // Realizar prestamo
     bool realizarPrestamo(int idPublicacion, int tipoPublicacion) {
         // Obtener fecha actual
         time_t now = time(0);
@@ -598,7 +625,7 @@ public:
                               to_string(1 + ltm->tm_mon) + "-" +
                               to_string(ltm->tm_mday);
 
-        // Calcular fecha de devolución (15 días después)
+        // Calcular fecha de devolucion (15 días después)
         tm fechaDev = *ltm;
         fechaDev.tm_mday += 15;
         mktime(&fechaDev);
@@ -606,11 +633,11 @@ public:
                                 to_string(1 + fechaDev.tm_mon) + "-" +
                                 to_string(fechaDev.tm_mday);
 
-        // Crear y guardar préstamo
+        // Crear y guardar prestamo
         Prestamo prestamo(ID_Usuario, idPublicacion, tipoPublicacion, fechaPrestamo, fechaDevolucion);
         if (prestamo.guardarEnDB()) {
-            // Obtener título de la publicación para la notificación
-            string titulo = "Publicación ID: " + to_string(idPublicacion);
+            // Obtener titulo de la publicación para la notificación
+            string titulo = "Publicacion ID: " + to_string(idPublicacion);
             string sql;
 
             if (tipoPublicacion == 1)
@@ -633,12 +660,12 @@ public:
         return false;
     }
 
-    // Calcular días restantes de préstamo
+    // Calcular días restantes de prestamo
     int calcularDiasRestantes(const string& fechaDevolucion) {
         time_t now = time(0);
         tm* ltm = localtime(&now);
 
-        // Convertir fecha de devolución a time_t
+        // Convertir fecha de devolucion a time_t
         tm fechaDev = {};
         sscanf(fechaDevolucion.c_str(), "%d-%d-%d", &fechaDev.tm_year, &fechaDev.tm_mon, &fechaDev.tm_mday);
         fechaDev.tm_year -= 1900;
@@ -661,16 +688,16 @@ public:
         }
 
         ostringstream asunto;
-        asunto << (esRecordatorio ? "Recordatorio de devolución: " : "Notificación: ") << tituloPublicacion;
+        asunto << (esRecordatorio ? "Recordatorio de devolucion: " : "Notificacion: ") << tituloPublicacion;
 
         ostringstream cuerpo;
         cuerpo << "Hola " << Nombre_Usuario << ",\r\n\r\n";
         if (esRecordatorio) {
-            cuerpo << "Tu préstamo de \"" << tituloPublicacion << "\" vence en " << diasRestantes << " día(s).\r\n";
+            cuerpo << "Tu prestamo de \"" << tituloPublicacion << "\" vence en " << diasRestantes << " dia(s).\r\n";
         } else {
-            cuerpo << "Has realizado un préstamo de \"" << tituloPublicacion << "\".\r\n";
+            cuerpo << "Has realizado un prestamo de \"" << tituloPublicacion << "\".\r\n";
         }
-        cuerpo << "\r\nRecomendación: " << recomendacion << "\r\n\r\n";
+        cuerpo << "\r\nRecomendacion: " << recomendacion << "\r\n\r\n";
         cuerpo << "Saludos,\r\nBiblioteca";
 
         // Construir comando para llamar al script Python
@@ -689,7 +716,7 @@ public:
 
         int res = std::system(cmd.str().c_str());
         if (res != 0) {
-            std::cerr << "Error ejecutando script de envío (codigo " << res << ")\n";
+            std::cerr << "Error ejecutando script de envio (codigo " << res << ")\n";
         }
     }
 
@@ -703,9 +730,9 @@ public:
         for (const auto& prestamo : historial) {
             int tipo = stoi(prestamo[3]);
             int idPub = stoi(prestamo[2]);
-            int valoracion = stoi(prestamo[7]); // Nueva columna de valoración
+            int valoracion = stoi(prestamo[7]); // Nueva columna de valoracion
 
-            // Solo considerar préstamos con buena valoración (4-5 estrellas)
+            // Solo considerar préstamos con buena valoracion (4-5 estrellas)
             if (valoracion >= 4) {
                 string sql;
                 if (tipo == 1) { // Libro
@@ -750,7 +777,7 @@ public:
 
             auto recomendacion = db.ejecutarConsulta(sql);
             if (!recomendacion.empty()) {
-                return "Basado en tu interés en " + generoFavorito +
+                return "Basado en tu interes en " + generoFavorito +
                        ", te recomendamos: '" + recomendacion[0][0] +
                        "' de " + recomendacion[0][1] + " " + recomendacion[0][2];
             }
@@ -778,8 +805,8 @@ public:
                 int diasRestantes = calcularDiasRestantes(prestamo[5]); // Fecha_Devolucion
 
                 if (diasRestantes <= 3 && diasRestantes > 0) {
-                    // Obtener título de la publicación
-                    string titulo = "Publicación ID: " + prestamo[2];
+                    // Obtener titulo de la publicación
+                    string titulo = "Publicacion ID: " + prestamo[2];
                     int tipo = stoi(prestamo[3]);
                     int idPub = stoi(prestamo[2]);
 
@@ -812,7 +839,7 @@ public:
 
         // Mostrar préstamos activos
         auto prestamos = Prestamo::obtenerHistorialUsuario(ID_Usuario);
-        cout << "Préstamos activos: ";
+        cout << "Prestamos activos: ";
         int activos = 0;
         for (const auto& prestamo : prestamos) {
             if (prestamo[6] == "Activo") activos++;
@@ -854,9 +881,8 @@ public:
             cout << "4. Gestion de Usuarios" << endl;
             cout << "5. Gestion de Prestamos" << endl;
             cout << "6. Mostrar Todo el Inventario" << endl;
-            cout << "7. Cargar Datos de Ejemplo" << endl;
-            cout << "8. Verificar Notificaciones" << endl;
-            cout << "9. Salir" << endl;
+            cout << "7. Verificar Notificaciones" << endl;
+            cout << "8. Salir" << endl;
             cout << "Seleccione una opcion: ";
             cin >> opcion;
             cin.ignore();
@@ -868,12 +894,11 @@ public:
                 case 4: menuUsuarios(); break;
                 case 5: menuPrestamos(); break;
                 case 6: mostrarTodo(); break;
-                case 7: cargarDatosEjemplo(); break;
-                case 8: verificarNotificaciones(); break;
-                case 9: cout << "Hasta luego" << endl; break;
-                default: cout << "Opcion inválida!" << endl;
+                case 7: verificarNotificaciones(); break;
+                case 8: cout << "Hasta luego" << endl; break;
+                default: cout << "Opcion invalida!" << endl;
             }
-        } while (opcion != 9);
+        } while (opcion != 8);
     }
 
 
@@ -881,11 +906,11 @@ private:
     void menuLibros() {
         int opcion;
         do {
-            cout << "\n=== GESTIÓN DE LIBROS ===" << endl;
+            cout << "\n=== GESTION DE LIBROS ===" << endl;
             cout << "1. Agregar Libro" << endl;
             cout << "2. Mostrar Todos los Libros" << endl;
-            cout << "3. Buscar Libro por Título" << endl;
-            cout << "4. Volver al Menú Principal" << endl;
+            cout << "3. Buscar Libro por Titulo" << endl;
+            cout << "4. Volver al Menu Principal" << endl;
             cout << "Seleccione: ";
             cin >> opcion;
             cin.ignore();
@@ -895,7 +920,7 @@ private:
                 case 2: mostrarLibros(); break;
                 case 3: buscarLibro(); break;
                 case 4: break;
-                default: cout << "Opcion inválida!" << endl;
+                default: cout << "Opcion invalida!" << endl;
             }
         } while (opcion != 4);
     }
@@ -906,11 +931,11 @@ private:
 
         cout << "ID: "; cin >> id;
         cin.ignore();
-        cout << "Título: "; getline(cin, titulo);
+        cout << "Titulo: "; getline(cin, titulo);
         cout << "Año: "; cin >> anio;
         cin.ignore();
         cout << "Editorial: "; getline(cin, editorial);
-        cout << "Género: "; getline(cin, genero);
+        cout << "Genero: "; getline(cin, genero);
         cout << "Autor Nombre: "; getline(cin, autorNom);
         cout << "Autor Apellido: "; getline(cin, autorApe);
         cout << "Stock: "; cin >> stock;
@@ -928,14 +953,14 @@ private:
         auto libros = db.obtenerTodosLosLibros();
         cout << "\n=== LISTA DE LIBROS ===" << endl;
         for (const auto& libro : libros) {
-            cout << "ID: " << libro[0] << " | Título: " << libro[1] << " | Autor: " << libro[4] << " " << libro[5]
+            cout << "ID: " << libro[0] << " | Titulo: " << libro[1] << " | Autor: " << libro[4] << " " << libro[5]
                  << " | Disponibles: " << libro[8] << "/" << libro[7] << endl;
         }
     }
 
     void buscarLibro() {
         string titulo;
-        cout << "Ingrese título a buscar: ";
+        cout << "Ingrese titulo a buscar: ";
         getline(cin, titulo);
 
         string sql = "SELECT * FROM libros WHERE Titulo LIKE '%" + db.escaparSQL(titulo) + "%';";
@@ -943,7 +968,7 @@ private:
 
         cout << "\n=== RESULTADOS DE BÚSQUEDA ===" << endl;
         for (const auto& libro : resultados) {
-            cout << "ID: " << libro[0] << " | Título: " << libro[1] << " | Autor: " << libro[4] << " " << libro[5]
+            cout << "ID: " << libro[0] << " | Titulo: " << libro[1] << " | Autor: " << libro[4] << " " << libro[5]
                  << " | Disponibles: " << libro[8] << "/" << libro[7] << endl;
         }
     }
@@ -951,12 +976,12 @@ private:
     void menuUsuarios() {
         int opcion;
         do {
-            cout << "\n=== GESTIÓN DE USUARIOS ===" << endl;
+            cout << "\n=== GESTION DE USUARIOS ===" << endl;
             cout << "1. Agregar Usuario" << endl;
             cout << "2. Mostrar Todos los Usuarios" << endl;
             cout << "3. Buscar Usuario por ID" << endl;
-            cout << "4. Mostrar Información de Usuario" << endl;
-            cout << "5. Volver al Menú Principal" << endl;
+            cout << "4. Mostrar Informacion de Usuario" << endl;
+            cout << "5. Volver al Menu Principal" << endl;
             cout << "Seleccione: ";
             cin >> opcion;
             cin.ignore();
@@ -967,7 +992,7 @@ private:
                 case 3: buscarUsuario(); break;
                 case 4: mostrarInfoUsuario(); break;
                 case 5: break;
-                default: cout << "Opcion inválida!" << endl;
+                default: cout << "Opcion invalida!" << endl;
             }
         } while (opcion != 5);
     }
@@ -1024,13 +1049,11 @@ private:
         auto usuario = Usuario::obtenerPorId(id);
         if (usuario) {
             usuario->mostrarInformacion();
-
-            // Mostrar préstamos del usuario
             auto prestamos = db.obtenerPrestamosUsuario(id);
             if (!prestamos.empty()) {
                 cout << "\n--- PRÉSTAMOS ---" << endl;
                 for (const auto& prestamo : prestamos) {
-                    cout << "Publicación ID: " << prestamo[2] << " | Tipo: "
+                    cout << "Publicacion ID: " << prestamo[2] << " | Tipo: "
                          << (prestamo[3] == "0" ? "Tesis" : prestamo[3] == "1" ? "Libro" : "Revista")
                          << " | Devolución: " << prestamo[5] << " | Estado: " << prestamo[6] << endl;
                 }
@@ -1044,12 +1067,12 @@ private:
     void menuPrestamos() {
         int opcion;
         do {
-            cout << "\n=== GESTIÓN DE PRÉSTAMOS ===" << endl;
-            cout << "1. Realizar Préstamo" << endl;
-            cout << "2. Mostrar Todos los Préstamos" << endl;
-            cout << "3. Ver Préstamos de Usuario" << endl;
-            cout << "4. Valorar Préstamo Devuelto" << endl; // Nueva opción
-            cout << "5. Volver al Menú Principal" << endl;
+            cout << "\n=== GESTION DE PRESTAMOS ===" << endl;
+            cout << "1. Realizar Prestamo" << endl;
+            cout << "2. Mostrar Todos los Prestamos" << endl;
+            cout << "3. Ver Prestamos de Usuario" << endl;
+            cout << "4. Valorar Prestamo Devuelto" << endl;
+            cout << "5. Volver al Menu Principal" << endl;
             cout << "Seleccione: ";
             cin >> opcion;
             cin.ignore();
@@ -1060,7 +1083,7 @@ private:
                 case 3: verPrestamosUsuario(); break;
                 case 4: valorarPrestamo(); break;
                 case 5: break;
-                default: cout << "Opcion inválida!" << endl;
+                default: cout << "Opcion invalida!" << endl;
             }
         } while (opcion != 5);
     }
@@ -1068,28 +1091,28 @@ private:
     void valorarPrestamo() {
         int idPrestamo, valoracion;
 
-        cout << "ID del Préstamo a valorar: ";
+        cout << "ID del Prestamo a valorar: ";
         cin >> idPrestamo;
 
         auto prestamo = Prestamo::obtenerPorId(idPrestamo);
         if (!prestamo) {
-            cout << "Préstamo no encontrado." << endl;
+            cout << "Prestamo no encontrado." << endl;
             return;
         }
 
-        cout << "Valoración (1-5 estrellas): ";
+        cout << "Valoracion (1-5 estrellas): ";
         cin >> valoracion;
         cin.ignore();
 
         if (valoracion < 1 || valoracion > 5) {
-            cout << "La valoración debe ser entre 1 y 5." << endl;
+            cout << "La valoracion debe ser entre 1 y 5." << endl;
             delete prestamo;
             return;
         }
         if (prestamo->agregarValoracion(valoracion)) {
-            cout << "Valoración registrada exitosamente!" << endl;
+            cout << "Valoracion registrada exitosamente!" << endl;
         } else {
-            cout << "Error al registrar la valoración." << endl;
+            cout << "Error al registrar la valoracion." << endl;
         }
 
         delete prestamo;
@@ -1099,13 +1122,13 @@ private:
         int idUsuario, idPublicacion, tipoPublicacion;
 
         cout << "ID Usuario: "; cin >> idUsuario;
-        cout << "ID Publicación: "; cin >> idPublicacion;
+        cout << "ID Publicacion: "; cin >> idPublicacion;
         cout << "Tipo (0=Tesis, 1=Libro, 2=Revista): "; cin >> tipoPublicacion;
 
         auto usuario = Usuario::obtenerPorId(idUsuario);
         if (usuario) {
             if (usuario->realizarPrestamo(idPublicacion, tipoPublicacion)) {
-                cout << "Préstamo realizado exitosamente!" << endl;
+                cout << "Prestamo realizado exitosamente!" << endl;
 
                 // Actualizar disponibilidad
                 string sql;
@@ -1122,7 +1145,7 @@ private:
                     db.actualizarDisponibilidad(tipoPublicacion, idPublicacion, disponibles - 1);
                 }
             } else {
-                cout << "Error al realizar el préstamo." << endl;
+                cout << "Error al realizar el prestamo." << endl;
             }
             delete usuario;
         } else {
@@ -1132,14 +1155,14 @@ private:
 
     void mostrarPrestamos() {
         auto prestamos = db.obtenerTodosLosPrestamos();
-        cout << "\n=== TODOS LOS PRÉSTAMOS ===" << endl;
+        cout << "\n=== TODOS LOS PRESTAMOS ===" << endl;
         for (const auto& prestamo : prestamos) {
             cout << "ID: " << prestamo[0] << " | Usuario: " << prestamo[1]
-                 << " | Publicación: " << prestamo[2]
+                 << " | Publicacion: " << prestamo[2]
                  << " | Tipo: " << (prestamo[3] == "0" ? "Tesis" : prestamo[3] == "1" ? "Libro" : "Revista")
-                 << " | Préstamo: " << prestamo[4] << " | Devolución: " << prestamo[5]
+                 << " | Prestamo: " << prestamo[4] << " | Devolución: " << prestamo[5]
                  << " | Estado: " << prestamo[6]
-                 << " | Valoración: " << (prestamo[7] == "0" ? "Sin valorar" : prestamo[7] + "/5") << endl;
+                 << " | Valoracion: " << (prestamo[7] == "0" ? "Sin valorar" : prestamo[7] + "/5") << endl;
         }
     }
 
@@ -1150,11 +1173,11 @@ private:
 
         auto prestamos = db.obtenerPrestamosUsuario(idUsuario);
         if (!prestamos.empty()) {
-            cout << "\n=== PRÉSTAMOS DEL USUARIO " << idUsuario << " ===" << endl;
+            cout << "\n=== PRESTAMOS DEL USUARIO " << idUsuario << " ===" << endl;
             for (const auto& prestamo : prestamos) {
-                cout << "Publicación: " << prestamo[2] << " | Tipo: "
+                cout << "Publicacion: " << prestamo[2] << " | Tipo: "
                      << (prestamo[3] == "0" ? "Tesis" : prestamo[3] == "1" ? "Libro" : "Revista")
-                     << " | Préstamo: " << prestamo[4] << " | Devolución: " << prestamo[5]
+                     << " | Prestamo: " << prestamo[4] << " | Devolución: " << prestamo[5]
                      << " | Estado: " << prestamo[6] << endl;
             }
         } else {
@@ -1180,11 +1203,11 @@ private:
     void menuRevistas() {
         int opcion;
         do {
-            cout << "\n=== GESTIÓN DE REVISTAS ===" << endl;
+            cout << "\n=== GESTION DE REVISTAS ===" << endl;
             cout << "1. Agregar Revistas" << endl;
             cout << "2. Mostrar Todos los Revistas" << endl;
-            cout << "3. Buscar Revista por Título" << endl;
-            cout << "4. Volver al Menú Principal" << endl;
+            cout << "3. Buscar Revista por Titulo" << endl;
+            cout << "4. Volver al Menu Principal" << endl;
             cout << "Seleccione: ";
             cin >> opcion;
             cin.ignore();
@@ -1194,7 +1217,7 @@ private:
                 case 2: mostrarRevistas(); break;
                 case 3: buscarRevista(); break;
                 case 4: break;
-                default: cout << "Opcion inválida!" << endl;
+                default: cout << "Opcion invalida!" << endl;
             }
         } while (opcion != 4);
     }
@@ -1205,11 +1228,11 @@ private:
 
         cout << "ID: "; cin >> id;
         cin.ignore();
-        cout << "Título: "; getline(cin, titulo);
+        cout << "Titulo: "; getline(cin, titulo);
         cout << "Año: "; cin >> anio;
         cin.ignore();
         cout << "Editorial: "; getline(cin, editorial);
-        cout << "Género: "; getline(cin, genero);
+        cout << "Genero: "; getline(cin, genero);
         cout << "Nro de Publicacion: "; cin >> nro_publicacion;
         cout << "Stock: "; cin >> stock;
         cout << "Mes de Publicacion: "; cin >> mes;
@@ -1226,14 +1249,14 @@ private:
         auto Revistas = db.obtenerTodasLasRevistas();
         cout << "\n=== LISTA DE REVISTAS ===" << endl;
         for (const auto& revista : Revistas) {
-            cout << "ID: " << revista[0] << " | Título: " << revista[1] << " | Editorial: " << revista[5] << " Nro " << revista[4]
+            cout << "ID: " << revista[0] << " | Titulo: " << revista[1] << " | Editorial: " << revista[5] << " Nro " << revista[4]
                  << " | Disponibles: " << revista[8] << "/" << revista[7] << endl;
         }
     }
 
     void buscarRevista() {
         string titulo;
-        cout << "Ingrese título a buscar: ";
+        cout << "Ingrese titulo a buscar: ";
         getline(cin, titulo);
 
         string sql = "SELECT * FROM revista WHERE Titulo LIKE '%" + db.escaparSQL(titulo) + "%';";
@@ -1241,18 +1264,18 @@ private:
 
         cout << "\n=== RESULTADOS DE BÚSQUEDA ===" << endl;
         for (const auto& Revista : resultados) {
-            cout << "ID: " << Revista[0] << " | Título: " << Revista[1] << " | Editorial: " << Revista[5] << " Nro " << Revista[4]
+            cout << "ID: " << Revista[0] << " | Titulo: " << Revista[1] << " | Editorial: " << Revista[5] << " Nro " << Revista[4]
                  << " | Disponibles: " << Revista[8] << "/" << Revista[7] << endl;
         }
     }
     void menuTesis() {
         int opcion;
         do {
-            cout << "\n=== GESTIÓN DE TESIS ===" << endl;
+            cout << "\n=== GESTION DE TESIS ===" << endl;
             cout << "1. Agregar Tesis" << endl;
             cout << "2. Mostrar Todas las Tesis" << endl;
-            cout << "3. Buscar Tesis por Título" << endl;
-            cout << "4. Volver al Menú Principal" << endl;
+            cout << "3. Buscar Tesis por Titulo" << endl;
+            cout << "4. Volver al Menu Principal" << endl;
             cout << "Seleccione: ";
             cin >> opcion;
             cin.ignore();
@@ -1262,7 +1285,7 @@ private:
                 case 2: mostrarTesis(); break;
                 case 3: buscarTesis(); break;
                 case 4: break;
-                default: cout << "Opcion inválida!" << endl;
+                default: cout << "Opcion invalida!" << endl;
             }
         } while (opcion != 4);
     }
@@ -1273,7 +1296,7 @@ private:
 
         cout << "ID: "; cin >> id;
         cin.ignore();
-        cout << "Título: "; getline(cin, titulo);
+        cout << "Titulo: "; getline(cin, titulo);
         cout << "Año: "; cin >> anio;
         cin.ignore();
         cout << "Universidad: "; getline(cin, universidad);
@@ -1294,14 +1317,14 @@ private:
         auto Tesis = db.obtenerTodasLasTesis();
         cout << "\n=== LISTA DE TESIS ===" << endl;
         for (const auto& tesis : Tesis) {
-            cout << "ID: " << tesis[0] << " | Título: " << tesis[1] << " | Autor: " << tesis[4] << " " << tesis[5]
+            cout << "ID: " << tesis[0] << " | Titulo: " << tesis[1] << " | Autor: " << tesis[4] << " " << tesis[5]
                  << " | Disponibles: " << tesis[8] << "/" << tesis[7] << endl;
         }
     }
 
     void buscarTesis() {
         string titulo;
-        cout << "Ingrese título a buscar: ";
+        cout << "Ingrese titulo a buscar: ";
         getline(cin, titulo);
 
         string sql = "SELECT * FROM tesis WHERE Titulo LIKE '%" + db.escaparSQL(titulo) + "%';";
@@ -1309,7 +1332,7 @@ private:
 
         cout << "\n=== RESULTADOS DE BÚSQUEDA ===" << endl;
         for (const auto& Tesis : resultados) {
-            cout << "ID: " << Tesis[0] << " | Título: " << Tesis[1] << " | Autor: " << Tesis[4] << " " << Tesis[5]
+            cout << "ID: " << Tesis[0] << " | Titulo: " << Tesis[1] << " | Autor: " << Tesis[4] << " " << Tesis[5]
                  << " | Disponibles: " << Tesis[8] << "/" << Tesis[7] << endl;
         }
     }
@@ -1340,16 +1363,6 @@ private:
         for (const auto& usuario : usuarios) {
             cout << "U" << usuario[0] << ": " << usuario[1] << " " << usuario[2] << endl;
         }
-    }
-
-    void cargarDatosEjemplo() {
-        cout << "Cargando datos de ejemplo..." << endl;
-
-        // Por ahora solo un ejemplo
-        db.insertarLibro(100, "Ejemplo de Libro", "2024", "Editorial Ejemplo",
-                        "Autor", "Ejemplo", "Ficcion", 5, 3);
-
-        cout << "Datos de ejemplo cargados." << endl;
     }
 };
 

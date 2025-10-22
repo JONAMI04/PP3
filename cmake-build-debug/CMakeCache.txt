@@ -249,10 +249,10 @@ PP3_IS_TOP_LEVEL:STATIC=ON
 PP3_SOURCE_DIR:STATIC=C:/Users/nahue/CLionProjects/PP3
 
 //No help, variable specified on the command line.
-Python3_EXECUTABLE:UNINITIALIZED=C:/Users/nahue/CLionProjects/PP3/.venv/Scripts/python.exe
+Python3_EXECUTABLE:UNINITIALIZED=C:/Users/nahue/CLionProjects/PP3/.venv1/Scripts/python.exe
 
 //No help, variable specified on the command line.
-Python_EXECUTABLE:UNINITIALIZED=C:/Users/nahue/CLionProjects/PP3/.venv/Scripts/python.exe
+Python_EXECUTABLE:UNINITIALIZED=C:/Users/nahue/CLionProjects/PP3/.venv1/Scripts/python.exe
 
 
 ########################
