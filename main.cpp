@@ -6,8 +6,6 @@
 #include "sqlite3.h"
 #include <sstream>
 #include <cstdlib>
-#include <algorithm>
-
 using namespace std;
 
 //correo biblioteca.pp3@gmail.com
@@ -689,14 +687,14 @@ public:
         asunto << (esRecordatorio ? "Recordatorio de devolucion: " : "Notificacion: ") << tituloPublicacion;
 
         ostringstream cuerpo;
-        cuerpo << "Hola " << Nombre_Usuario << ",\r\n\r\n";
+        cuerpo << "Hola " << Nombre_Usuario << ", ";
         if (esRecordatorio) {
-            cuerpo << "Tu prestamo de \"" << tituloPublicacion << "\" vence en " << diasRestantes << " dia(s).\r\n";
+            cuerpo << "Tu prestamo de \"" << tituloPublicacion << "\" vence en " << diasRestantes << " dia(s).";
         } else {
-            cuerpo << "Has realizado un prestamo de \"" << tituloPublicacion << "\".\r\n";
+            cuerpo << "Has realizado un prestamo de \"" << tituloPublicacion << "\".";
         }
-        cuerpo << "\r\nRecomendacion: " << recomendacion << "\r\n\r\n";
-        cuerpo << "Saludos,\r\nBiblioteca";
+        cuerpo << "Recomendacion: " << recomendacion << " ";
+        cuerpo << "Saludos, Biblioteca";
 
         // Construir comando para llamar al script Python
         string script = "enviar_mail.py";
@@ -704,6 +702,7 @@ public:
         string mailArg = escapeArg(Mail);
         string subjArg = escapeArg(asunto.str());
         string bodyArg = escapeArg(cuerpo.str());
+
 
         ostringstream cmd;
         cmd << "python \"" << script << "\" "
