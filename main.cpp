@@ -261,18 +261,16 @@ public:
     }
 
     bool actualizarDisponibilidad(int tipo, int id, int nueva_cantidad) {
-        string tabla, sql;
+        if (nueva_cantidad < 0) nueva_cantidad = 0;
+        string sql;
         if (tipo == 0) {
-            tabla = "tesis";
-            string sql = "UPDATE tesis SET Cantidad_Disponible = " + to_string(nueva_cantidad) +
+            sql = "UPDATE tesis SET Cantidad_Disponible = " + to_string(nueva_cantidad) +
                   " WHERE ID_Tesis = " + to_string(id) + ";";
         } else if (tipo == 1) {
-            tabla = "libros";
-            string sql = "UPDATE libros SET Cantidad_Disponible = " + to_string(nueva_cantidad) +
+            sql = "UPDATE libros SET Cantidad_Disponible = " + to_string(nueva_cantidad) +
                   " WHERE ID_Libro = " + to_string(id) + ";";
         } else if (tipo == 2) {
-            tabla = "revista";
-            string sql = "UPDATE revista SET Cantidad_Disponible = " + to_string(nueva_cantidad) +
+            sql = "UPDATE revista SET Cantidad_Disponible = " + to_string(nueva_cantidad) +
                   " WHERE ID_Revista = " + to_string(id) + ";";
         } else {
             return false;
@@ -1140,9 +1138,18 @@ private:
                     sql = "SELECT Cantidad_Disponible FROM tesis WHERE ID_Tesis = " + to_string(idPublicacion);
 
                 auto resultado = db.ejecutarConsulta(sql);
-                if (!resultado.empty()) {
-                    int disponibles = stoi(resultado[0][0]);
-                    db.actualizarDisponibilidad(tipoPublicacion, idPublicacion, disponibles - 1);
+                if (!resultado.empty() && !resultado[0][0].empty()) {
+                    int disponibles = 0;
+                    try {
+                        disponibles = stoi(resultado[0][0]);
+                    } catch (...) {
+                        disponibles = 0;
+                    }
+                    if (!db.actualizarDisponibilidad(tipoPublicacion, idPublicacion, disponibles - 1)) {
+                        cout << "Advertencia: No se pudo actualizar la disponibilidad en la base de datos." << endl;
+                    }
+                }else {
+                    cout << "Advertencia: no se pudo leer la disponibilidad actual." << endl;
                 }
             } else {
                 cout << "Error al realizar el prestamo." << endl;
