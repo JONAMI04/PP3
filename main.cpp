@@ -318,12 +318,32 @@ public:
     int getTipo() const { return Tipo; }
 
     static void total_publicaciones() {
-        cout << "El total de Publicaciones es: " << Total_Publicaciones << endl;
+        int cLibros = 0, cRevistas = 0, cTesis = 0;
+
+        auto rLibros = db.ejecutarConsulta("SELECT COUNT(*) FROM libros;");
+        if (!rLibros.empty() && !rLibros[0][0].empty()) {
+            try { cLibros = stoi(rLibros[0][0]); } catch(...) { cLibros = 0; }
+        }
+
+        auto rRevistas = db.ejecutarConsulta("SELECT COUNT(*) FROM revista;");
+        if (!rRevistas.empty() && !rRevistas[0][0].empty()) {
+            try { cRevistas = stoi(rRevistas[0][0]); } catch(...) { cRevistas = 0; }
+        }
+
+        auto rTesis = db.ejecutarConsulta("SELECT COUNT(*) FROM tesis;");
+        if (!rTesis.empty() && !rTesis[0][0].empty()) {
+            try { cTesis = stoi(rTesis[0][0]); } catch(...) { cTesis = 0; }
+        }
+
+        int total = cLibros + cRevistas + cTesis;
+        cout << "Total de publicaciones en la base de datos: " << total
+             << " (Libros: " << cLibros << ", Revistas: " << cRevistas << ", Tesis: " << cTesis << ")" << endl;
+
     }
-//Creo Que no Hace Falta
+/*/Creo Que no Hace Falta
     static void cargarDatosDesdeCSV() {
         cout << "Funcion para cargar datos desde CSV (a implementar)" << endl;
-    }
+    }*/
 };
 
 // Inicializar miembros static
