@@ -1,9 +1,8 @@
 import sys
 import smtplib
 import ssl
+from email.header import Header
 from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-
 def usage():
     print("Uso: python enviar_mail.py <nombre> <destinatario> <asunto> <cuerpo>")
     sys.exit(1)
@@ -25,10 +24,10 @@ if not EMAIL_USER or not EMAIL_PASS:
 
 # Usamos MIMEText para texto simple, es lo más simple.
 mensaje = MIMEText(cuerpo, "plain", "utf-8")
-mensaje["Subject"] = asunto
-mensaje["From"] = EMAIL_USER
+mensaje["Subject"] = Header(asunto, 'utf-8')
+remitente_display = f"{nombre} <{EMAIL_USER}>"
+mensaje["From"] = Header(remitente_display, 'utf-8')
 mensaje["To"] = destinatario
-
 
 try:
     # **CORRECCIÓN CLAVE:** Usar SMTP para puerto 587 y luego starttls()

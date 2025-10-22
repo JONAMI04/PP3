@@ -158,7 +158,7 @@ public:
             ");";
         ejecutarSQL(sql_usuarios);
 
-        // Tabla de préstamos
+        // Tabla de prestamos
         string sql_prestamos =
             "CREATE TABLE IF NOT EXISTS prestamos ("
             "ID_Prestamo INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -724,13 +724,13 @@ public:
         map<string, int> generosFrecuentes;
         map<string, int> autoresFrecuentes;
 
-        // Analizar géneros y autores de préstamos anteriores con valoraciones altas
+        // Analizar géneros y autores de prestamos anteriores con valoraciones altas
         for (const auto& prestamo : historial) {
             int tipo = stoi(prestamo[3]);
             int idPub = stoi(prestamo[2]);
             int valoracion = stoi(prestamo[7]); // Nueva columna de valoracion
 
-            // Solo considerar préstamos con buena valoracion (4-5 estrellas)
+            // Solo considerar prestamos con buena valoracion (4-5 estrellas)
             if (valoracion >= 4) {
                 string sql;
                 if (tipo == 1) { // Libro
@@ -794,7 +794,7 @@ public:
         return "Te recomendamos explorar nuestras novedades literarias.";
     }
 
-    // Verificar préstamos próximos a vencer
+    // Verificar prestamos próximos a vencer
     void verificarPrestamosProximos() {
         auto prestamos = Prestamo::obtenerHistorialUsuario(ID_Usuario);
 
@@ -831,11 +831,11 @@ public:
         cout << "ID: " << ID_Usuario << endl;
         cout << "Nombre: " << Nombre_Usuario << " " << Apellido_Usuario << endl;
         cout << "DNI: " << DNI_Usuario << endl;
-        cout << "Dirección: " << Direccion << endl;
+        cout << "Direccion: " << Direccion << endl;
         cout << "Teléfono: " << Telefono << endl;
         cout << "Email: " << Mail << endl;
 
-        // Mostrar préstamos activos
+        // Mostrar prestamos activos
         auto prestamos = Prestamo::obtenerHistorialUsuario(ID_Usuario);
         cout << "Prestamos activos: ";
         int activos = 0;
@@ -1004,7 +1004,7 @@ private:
         cout << "Nombre: "; getline(cin, nombre);
         cout << "Apellido: "; getline(cin, apellido);
         cout << "DNI: "; getline(cin, dni);
-        cout << "Dirección: "; getline(cin, direccion);
+        cout << "Direccion: "; getline(cin, direccion);
         cout << "Teléfono: "; getline(cin, telefono);
         cout << "Email: "; getline(cin, mail);
 
@@ -1049,11 +1049,11 @@ private:
             usuario->mostrarInformacion();
             auto prestamos = db.obtenerPrestamosUsuario(id);
             if (!prestamos.empty()) {
-                cout << "\n--- PRÉSTAMOS ---" << endl;
+                cout << "\n--- PRESTAMOS ---" << endl;
                 for (const auto& prestamo : prestamos) {
                     cout << "Publicacion ID: " << prestamo[2] << " | Tipo: "
                          << (prestamo[3] == "0" ? "Tesis" : prestamo[3] == "1" ? "Libro" : "Revista")
-                         << " | Devolución: " << prestamo[5] << " | Estado: " << prestamo[6] << endl;
+                         << " | Devolucion: " << prestamo[5] << " | Estado: " << prestamo[6] << endl;
                 }
             }
             delete usuario;
@@ -1167,7 +1167,7 @@ private:
             cout << "ID: " << prestamo[0] << " | Usuario: " << prestamo[1]
                  << " | Publicacion: " << prestamo[2]
                  << " | Tipo: " << (prestamo[3] == "0" ? "Tesis" : prestamo[3] == "1" ? "Libro" : "Revista")
-                 << " | Prestamo: " << prestamo[4] << " | Devolución: " << prestamo[5]
+                 << " | Prestamo: " << prestamo[4] << " | Devolucion: " << prestamo[5]
                  << " | Estado: " << prestamo[6]
                  << " | Valoracion: " << (prestamo[7] == "0" ? "Sin valorar" : prestamo[7] + "/5") << endl;
         }
@@ -1184,11 +1184,11 @@ private:
             for (const auto& prestamo : prestamos) {
                 cout << "Publicacion: " << prestamo[2] << " | Tipo: "
                      << (prestamo[3] == "0" ? "Tesis" : prestamo[3] == "1" ? "Libro" : "Revista")
-                     << " | Prestamo: " << prestamo[4] << " | Devolución: " << prestamo[5]
+                     << " | Prestamo: " << prestamo[4] << " | Devolucion: " << prestamo[5]
                      << " | Estado: " << prestamo[6] << endl;
             }
         } else {
-            cout << "No se encontraron préstamos para este usuario." << endl;
+            cout << "No se encontraron prestamos para este usuario." << endl;
         }
     }
 
